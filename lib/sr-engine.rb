@@ -61,6 +61,7 @@ module Padrino
         str.gsub!(/(?<re>\[(?:(?>[^\[\]]+)|\g<re>)*\])/) do |s|
           tag = $1[1..-2]
           md = tag.match /(page|link|block|text|image|img|file|asset|element|elem|lmn)((?:[\:\.\#][\w\-]*)*)\s+(.*)/
+
           unless md
             tags = tag.partition ' '
             code = Code.by_slug tags[0]  unless tags[0][0] == '/'
