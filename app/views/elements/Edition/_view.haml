@@ -1,0 +1,22 @@
+.last_editions
+  .editions_info
+    = "Выпуск: %s Год: %s Статей в выпуске: %s" % [ @edition.json['Номер выпуска'],@edition.json['Год'], @edition.json['Статей в выпуске'] ]
+  %table.info
+    = '<caption>' + 'Содержание выпуска'
+    = '<tr class=table_caption>'
+    = '<td class=table_caption>' + 'Автор'
+    = '<td class=table_caption>' + 'Название статьи'
+    = '<td class=table_caption>' + 'Страницы'
+    - @articles.each do |a|
+      = '<tr>'
+      = '<td>' + a.json['Авторы']
+      = '<td>' + a.text
+      = '<td>' + a.json['Страницы']
+  .before_edition 
+    - if @before_edition
+      = link_to '<< Предыдущий выпуск', "#{@swift[:module_root]}/" + @before_edition.slug
+  .after_edition
+    - if @after_edition
+      = link_to 'Следующий выпуск >>',  "#{@swift[:module_root]}/" + @after_edition.slug
+    
+        

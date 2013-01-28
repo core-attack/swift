@@ -1,0 +1,17 @@
+﻿:ruby
+  @year, @num, @index = @swift[:slug].split('-')
+  @edition = CatNode.last( :cat_card_id => 1, :conditions => ["json LIKE '%\"Номер выпуска\":\"#{@num}\"%' AND json LIKE '%\"Год\":\"#{@year}\"%'"] )
+  @index = @index.to_i
+  @articles = CatNode.all( :cat_card_id => 2, :conditions => ["json LIKE '%\"Номер выпуска\":\"#{@num}\"%' AND json LIKE '%\"Год\":\"#{@year}\"%'"] )
+  if @index == 1
+    @before_article = @articles.length
+    @after_article = @index + 1
+  elsif @index > 1 && @index < @articles.length
+    @before_article = @index - 1
+    @after_article = @index + 1
+  elsif @index.to_i == @articles.length
+    @before_article = @articles.length - 1
+    @after_article = 1
+  end
+
+
