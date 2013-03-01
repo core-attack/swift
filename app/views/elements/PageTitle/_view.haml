@@ -1,1 +1,6 @@
-﻿%title= @steps.map(&:title).join(' | ')
+﻿- if @steps.length != 0
+  - unless session[:language].eql? "eng"
+    %title= ["Известия Института математики и информатики УдГУ", @steps.map(&:title).last.split('#')[0]].compact.join(' — ')
+  - else
+    %title= ["News Institute of mathemathics and informatics UdSU", @steps.map(&:title).last.split('#')[1]].compact.join(' — ')
+

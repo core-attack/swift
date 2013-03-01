@@ -115,6 +115,7 @@ module SwiftDatamapper
       send :include, AmorphousMethods
 
       property :json, DataMapper::Property::Json, :default => {}
+      attr_accessor :json_errors
     end
 
     # Resource is recursive
@@ -172,7 +173,7 @@ module SwiftDatamapper
 
     # Guesses if resource is published and not in the future
     def published?
-      self.is_published && DateTime.new(self.publish_at.to_i) <= DateTime.now
+      self.is_published && Time.at(self.publish_at.to_i).to_datetime <= DateTime.now
     end
 
   end  

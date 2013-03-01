@@ -42,3 +42,6 @@ gem 'carrierwave-datamapper'
 gem 'omniauth'
 gem 'rack-openid', :require => "rack/openid"
 gem 'omniauth-openid'
+
+#xml parser
+gem 'nokogiri'

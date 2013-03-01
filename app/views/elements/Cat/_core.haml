@@ -4,11 +4,12 @@
   bonds = Bond.bonds_for @page, 'CatCard'
   @card_ids = bonds.map(&:child).map(&:id)
   @groups = CatGroup.all :cat_card_id => @card_ids
-
+  
   if md = @swift[:slug].match( /show\/(.*)/ )
     @swift[:slug] = md[1]
     @swift[:path_pages] << Page.new
-    throw :core_halt, element( 'CatNode', @args, @opts )
+    throw @swift[:slug]
+    throw :core_halt, element( 'Article', @args, @opts )
   end
 
   if md = @swift[:slug].match( /.*/ )

@@ -10,6 +10,8 @@ Element:
     title: "Каталог: ресурс"
   CatNodes:
     title: "Каталог: ресурсы"
+  Crumbs:
+    title: "Хлебные крошки"
   Date:
     title: Дата
   Eval:

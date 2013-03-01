@@ -1,0 +1,26 @@
+en:
+  imi:
+    issue:
+      table_of_contents: Содержание
+      year: Year
+      issue: Issue
+      pages: Pages
+      name_of_issue: Name of issue
+      author: Author
+      authors : Author(-s) 
+      abstract: Abstract
+      keywords: Keywords
+      codeUDK: Code UDK
+      codeMSC: Code MSC
+      received: Received
+      citation: Citation
+      references: References
+      full_text: Full text
+      article_name: Article name 
+      pages: Pages
+      previous_issue: << Previous issue
+      next_issue: Next issue >>
+      all_issues: All issues 
+      mittec: Development 
+  errors:
+    cat_card: "Something is wrong. Perhaps you made a mistake when filling out the data card. Return and try to find her. If the problem persists, contact the developer."

@@ -1,1 +1,2 @@
-= render_text @page.text
+- unless @page.text == ""
+  = render_text @page.text.gsub(/.*\<#{session[:language]}\>(.*)\<\/#{session[:language]}\>.*/m ,'\1')

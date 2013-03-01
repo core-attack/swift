@@ -1,0 +1,26 @@
+ru:
+  imi:
+    issue:
+      table_of_contents: Содержание
+      year: Год
+      issue: Выпуск
+      pages: Страницы
+      name_of_issue: Наименование выпуска
+      author: Автор
+      authors : Автор(-ы) 
+      abstract: Аннотация
+      keywords: Ключевые слова
+      codeUDK: Код УДК
+      codeMSC: Код MSC
+      received: Поступила в редакцию
+      citation: Образец цитирования
+      references: Список литературы
+      full_text: Полный текст
+      article_name: Наименование статьи 
+      pages: Страницы
+      previous_issue: << Предыдущий выпуск
+      next_issue: Следующий выпуск >>
+      all_issues: Всего статей
+      mittec: Разработка  
+  errors:
+    cat_card: "Что-то не так. Скорей всего Вы допустили ошибку при заполнении карточки данными. Вернитесь назад и попробуйте её найти. Если не поможет, обратитесь к разработчику"

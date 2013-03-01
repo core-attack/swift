@@ -52,11 +52,16 @@ class Swift < Padrino::Application
     @pages = Page.all.published
     render 'layouts/sitemap'
   end
-
+  
+  
   # if no controller got the request, try finding some content in the sitemap
   get_or_post = lambda do
     @swift = init_instance
-
+    
+    
+    session[:language] ||= 'ru-RU'
+    session[:language] = params[:language]  if params[:language]
+    I18n.locale = session[:language][0..1].to_sym
     not_found  if @swift[:not_found]
     not_found  unless @page
 
@@ -131,8 +136,18 @@ protected
       swift[:path_ids].unshift page.id
       page = page.parent
     end
-
     swift
+    
+  end
+  
+  def set_language
+    language = ''
+    if @swift[:module_root].include? 'eng'
+      language = 'eng'
+    else
+      language = 'rus'
+    end
+    language
   end
 
 end

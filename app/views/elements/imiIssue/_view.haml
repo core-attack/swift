@@ -1,0 +1,75 @@
+.issue
+  - if session[:language].eql? "en-US"
+    .issues_info
+      = "Issue: %s (%s) Year: %s Articles in issue: %s" % [ @issue.json['Номер выпуска'], @issue.json['Сквозной номер'], @issue.json['Год'], @issue.json['Статей в выпуске'] ]
+    %table.table_info
+      %caption
+        = 'Table of Contents'
+      %tr.table_caption
+      %td.table_caption 
+        = 'Author'
+      %td.table_caption 
+        = 'Issue name'
+      %td.table_caption 
+        = 'Pages' 
+      - s = ''
+      - @articles.each do |a|
+        %tr
+          - s = ''
+          - arr = a.json['Авторы ENG'].to_a
+          - arr.each_with_index do |author, i|
+            - if i != arr.length - 1
+              - s += author["surname"] + ' ' + author["fname"] + ',<br>'
+            - else
+              - s += author["surname"] + ' ' + author["fname"]  
+          %td
+            = s
+          %td
+            = link_to(a["Название ENG"], @swift[:module_root].gsub('/show', '/issue') + '/' + @issue.json['Год'] + '-' + @issue.json['Номер выпуска'] + '-' + a.json['Номер статьи'].to_s)
+          - schoen = a.json['Страницы'].split('-')
+          %td 
+            = schoen[0] + " - " + schoen[1]
+    .before_issue 
+      - if @before_issue
+        = link_to '<< Before issue', "#{@swift[:module_root]}/" + @before_issue.slug
+    .after_issue
+      - if @after_issue
+        = link_to 'After issue >>',  "#{@swift[:module_root]}/" + @after_issue.slug
+  - else
+    .issues_info
+      = "Выпуск: %s (%s) Год: %s Статей в выпуске: %s" % [ @issue.json['Номер выпуска'], @issue.json['Сквозной номер'], @issue.json['Год'], @issue.json['Статей в выпуске'] ]
+    %table.table_info
+      %caption
+        = 'Содержание выпуска'
+      %tr.table_caption
+      %td.table_caption 
+        = 'Автор'
+      %td.table_caption 
+        = 'Название статьи'
+      %td.table_caption 
+        = 'Страницы'
+      - s = ''
+      - @articles.each do |a|
+        %tr
+          - s = ''
+          - arr = a.json['Авторы'].to_a
+          - arr.each_with_index do |author, i|
+            - if i != arr.length - 1
+              - s += author["surname"] + ' ' + author["fname"] + ',<br>'
+            - else
+              - s += author["surname"] + ' ' + author["fname"]  
+          %td
+            = s
+          %td
+            = link_to(a.text, @swift[:module_root].gsub('/show', '/issue') + '/' + @issue.json['Год'] + '-' + @issue.json['Номер выпуска'] + '-' + a.json['Номер статьи'].to_s)
+          - schoen = a.json['Страницы'].split('-')
+          %td
+            = schoen[0] + " - " + schoen[1]
+    .before_issue 
+      - if @before_issue
+        = link_to '<< Предыдущий выпуск', "#{@swift[:module_root]}/" + @before_issue.slug
+    .after_issue
+      - if @after_issue
+        = link_to 'Следующий выпуск >>',  "#{@swift[:module_root]}/" + @after_issue.slug
+    
+        

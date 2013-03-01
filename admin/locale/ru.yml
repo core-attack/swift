@@ -216,3 +216,7 @@ ru:
       date_other_year: "%e %B %Y"
       date_same_year: "%e %B"
       datetime: "%e %b %Y, %H:%M:%S"
+  datamapper:
+    errors:
+      messages:
+        json_error: 'Something is wrong. Perhaps you made a mistake when filling out the data card. Return and try to find her. If the problem persists, contact the developer.'

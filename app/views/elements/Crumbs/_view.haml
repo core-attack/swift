@@ -1,6 +1,9 @@
 .crumbs
   - @swift[:path_pages].each_with_index do |p, i|
     %a{:href => p.path}<
-      = p[:title].to_s
+      - if session[:language].eql? "en-US"
+        = p[:title].to_s.split('#')[1]
+      - else
+        = p[:title].to_s.split('#')[0]
     - if (i != @swift[:path_pages].length - 1)
       = "»"

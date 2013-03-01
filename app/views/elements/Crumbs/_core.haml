@@ -1,0 +1,33 @@
+:ruby
+  if @swift[:module_root]
+    if @swift[:module_root].include? "issues" 
+      if @swift[:path_pages][@swift[:path_pages].length - 1].slug == "issue" || @swift[:path_pages][@swift[:path_pages].length - 1].slug == "show"
+        @swift[:path_pages].pop
+        @swift[:path_ids].pop
+        slug = ''
+        title = ''
+        @swift[:slug].split('/').each do |step|
+          if @swift[:module_root].include? "/issues/archive/issue"
+            year, num, snum = @swift[:slug].split('-')
+            article = CatNode.first( :cat_card_id => 2, :conditions => ["json LIKE '%\"Номер выпуска\":\"#{num}\"%' AND json LIKE '%\"Год\":\"#{year}\"%' AND json LIKE '%\"Номер статьи\":\"#{snum}\"%'"] )
+            slug += '/' + year.to_s + '-' + num.to_s
+            title = year + ' - ' +  num + ' выпуск#'
+            title += year + ' - ' +  num + ' issue'
+            @swift[:path_pages].push Page.new :title => title, :path => "/issues/archive/show" + slug
+            @swift[:path_ids].push 1
+            title = 'C. ' + article.json['Страницы'].split('-')[0].strip + '-' + article.json['Страницы'].split('-')[1].strip   
+            title += '#pp. ' + article.json['Страницы'].split('-')[0].strip + '-' + article.json['Страницы'].split('-')[1].strip   
+            slug += '-' + snum.to_s
+            @swift[:path_pages].push Page.new :title => title, :path => @swift[:module_root] + slug
+            @swift[:path_ids].push 1
+          else 
+            slug += '/' + step
+            title = slug.split('/')[1].split('-')[0] + ' - ' +  slug.split('/')[1].split('-')[1] + ' выпуск#' 
+            title += slug.split('/')[1].split('-')[0] + ' - ' +  slug.split('/')[1].split('-')[1] + ' issue' 
+            @swift[:path_pages].push Page.new :title => title, :path => @swift[:module_root] + slug
+            @swift[:path_ids].push 1
+          end
+        end
+      end
+    end
+  end

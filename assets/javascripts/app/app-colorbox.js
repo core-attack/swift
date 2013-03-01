@@ -27,3 +27,24 @@ $(document).bind('cbox_complete', function(){
   });
   $(document.body).css('overflow-y', 'scroll');
 });
+$(document).bind('language', function(){
+  $('#language').click(function() {
+    var a = $.a.element();
+    if (a.className == "rus")
+    {  
+      a.className = "rus ACTIVE"
+      var arr = getElementsByName('eng')
+      if (arr.length != 0)
+        arr[0].className = "eng"
+    }
+    else if (a.className == "eng")
+    {
+      a.className = "eng ACTIVE"
+      var arr = getElementsByName('rus')
+      if (arr.length != 0)
+        arr[0].className = "rus"
+    }
+  });
+  alert("!");
+
+};)

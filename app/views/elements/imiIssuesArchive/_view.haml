@@ -1,0 +1,22 @@
+.issue_archive
+  - year = ""
+  - count = {}
+  - @issues.each do |e|
+    - y = e.json['Год']
+    - count[y] ||= 0
+    - count[y] += e.json['Статей в выпуске'].to_i
+  %table
+    - @issues.each do |e|
+      - if year == e.json['Год']
+        = '<td>'
+        = link_to e.json['Номер выпуска'].to_s + ' (' + e.json['Сквозной номер'].to_s + ')', "archive/show/" + e.json['Год'] + "-" + e.json['Номер выпуска'].to_s + "-1" 
+      - else
+        = '<tr>'
+        = '<td>'
+        = e.json['Год']
+        = '<td>'
+        = I18n.translate('imi.issue.all_issues') + ': ' + count[e.json['Год']].to_s
+        = '<td>'
+        = link_to e.json['Номер выпуска'].to_s + ' (' + e.json['Сквозной номер'].to_s + ')', "archive/show/" + e.json['Год'] + "-" + e.json['Номер выпуска'].to_s
+      - year = e.json['Год']
+      

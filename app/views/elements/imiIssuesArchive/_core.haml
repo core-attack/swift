@@ -1,0 +1,4 @@
+﻿:ruby
+  @issues = CatNode.all(:cat_card_id => 1, :order => :title.asc).to_a.sort_by do |n|
+    -n.json['Год'].to_f + n.json['Номер выпуска'].to_f/10
+  end

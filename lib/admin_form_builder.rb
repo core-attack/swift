@@ -8,7 +8,7 @@ module Padrino
         include AssetTagHelpers
         include OutputHelpers
 
-        def input( field, options={} )
+        def input( field, options={})
           object = @object.class.to_s.underscore
           options[:label] ||= {}
           caption = options[:label].delete(:caption) || make_caption(field)
@@ -97,14 +97,18 @@ module Padrino
             opts.merge! :value => options[:value]  if options[:value]
             text_field field, opts
           end
-          error = @object.errors[field]  rescue []
+          $logger << [@object.errors, @object.json_errors].inspect
+          error = Array(@object.errors.delete(field))
+          error += Array(@object.json_errors.delete(field))  if @object.json_errors.respond_to?(:delete) 
+          
           controls += content_tag( :span, error.join(', '), :class => 'help-inline' )  if error.any?          
           html = label( field, options[:label].merge( :class => 'control-label', :caption => caption ))
           html += ' ' + @template.content_tag( :div, controls, :class => :controls )
           html += ' ' + @template.content_tag( :span, options[:description], :class => :description )  unless options[:description].blank?
           klass = "control-group as_#{type}"
           klass += ' morphable'  if morphable
-          klass += ' error'  if error.any?
+          klass += ' error'  if error.any? 
+          
           @template.content_tag( :div, html, :class => klass)
         end
 
