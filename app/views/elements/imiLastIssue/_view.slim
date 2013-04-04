@@ -1,0 +1,56 @@
+﻿.last_issues
+  .issues_info
+    = I18n.translate('imi.issue.issue').to_s + ": " + @issue.json['Номер выпуска'].to_s + " (" + @issue.json['Сквозной номер'].to_s + ") " 
+    = image_tag url('/img/design/130114150336_list-puncts.png')
+    = ' '
+    = I18n.translate('imi.issue.year').to_s + ": "+ @issue.json['Год'].to_s + " " 
+    = image_tag url('/img/design/130114150336_list-puncts.png')
+    = ' '
+    = I18n.translate('imi.issue.articles_in_issue').to_s + ": " + @issue.json['Статей в выпуске'].to_s
+    .min_nav
+      .before_issue 
+        - if @before_issue
+          = link_to "<<",  "archive/show/" + @before_issue.slug
+  table.table_info
+    caption
+      = t 'imi.issue.table_of_contents'
+    tr.table_caption
+    td.table_caption 
+      = t 'imi.issue.author'
+    td.table_caption 
+      = t 'imi.issue.name_of_article'
+    td.table_caption 
+      = t 'imi.issue.pages'
+    - s = ''
+    - @articles.each do |a|
+      tr
+        - s = ''
+        - arr = []
+        - if session[:language].eql? "en-US"
+          - arr = a.json['Авторы ENG'].to_a
+        - else
+          - arr = a.json['Авторы'].to_a
+        - arr.each_with_index do |author, i|
+          - if i != arr.length - 1
+            - s += author["surname"] + ' ' + author["fname"] + ',<br>'
+          - else
+            - s += author["surname"] + ' ' + author["fname"]  
+        td
+          = s
+        td
+          - name = ''
+          - if session[:language].eql? "en-US"
+            - name = a["Название ENG"]
+          - else
+            - name = a.text
+          = link_to(name, @swift[:module_root].gsub('/last', '/archive/issue') + '/' + @issue.json['Год'] + '-' + @issue.json['Номер выпуска'] + '-' + a.json['Номер статьи'].to_s)
+        - schoen = a.json['Страницы'].split('-')
+        td
+          = schoen[0] + " - " + schoen[1]
+  .before_issue 
+    - if @before_issue
+      = link_to (t 'imi.issue.previous_issue'), "archive/show/" + @before_issue.slug
+  
+   
+    
+        

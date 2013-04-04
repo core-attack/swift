@@ -1,2 +1,45 @@
 en:
   home: Home
+  imi:
+    header:
+      imi: Izvestiya Instituta Matematiki i Informatiki
+      udsu: Udmurtskogo Gosudarstvennogo Universiteta
+      date: Published since 1993
+      search_: Search...
+      search: Search
+    issue:
+      table_of_contents: Table of contents
+      year: Year
+      issue: Issue
+      pages: Pages
+      name_of_article: Name of article
+      articles_in_issue: Articles in issue
+      author: Author
+      authors : Author(-s) 
+      abstract: Abstract
+      keywords: Keywords
+      codeUDK: UDK
+      codeMSC: MSC
+      received: Received
+      citation: Citation
+      references: References
+      full_text: Full text
+      article_name: Title 
+      pages: Pages
+      previous_issue: << Previous issue
+      next_issue: Next issue >>
+      previous_article: << Previous article
+      next_article: Next article >>
+      
+      previous_min: <<
+      next_min: Next >>
+      all_issues: All issues 
+      mittec: Development 
+  time:
+    formats:
+      date: "%e %b %Y"
+      date_other_year: "%e %B %Y"
+      date_same_year: "%e %B"
+      datetime: "%e %b %Y, %H:%M:%S"    
+  errors:
+    cat_card: "Something is wrong. Perhaps you made a mistake when filling out the data card. Return and try to find her. If the problem persists, contact the developer."

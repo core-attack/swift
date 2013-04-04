@@ -1,0 +1,9 @@
+ruby:
+  @lang 
+  if @swift[:module_root] && @swift[:module_root].include?('en-US')
+    @lang = 'en-US'
+  else
+    @lang = 'ru-RU'
+  end
+  
+  

@@ -1,0 +1,16 @@
+.lang
+  - if @lang.include? 'ru-RU'
+    a.rus href='?language=ru-RU' id='language' name='ru-RU used'
+      = image_tag '/img/design/130109144554_ru.png', :alt => 'ru-RU'
+      = ' Русский'
+    a.eng href='?language=en-US' id='language' name='en-US'
+      = image_tag '/img/design/130109144553_eng.png', :alt => 'en-US'
+      = ' English'
+  - else 
+    a.rus href='?language=ru-RU' id='language' name='rus'
+      = image_tag '/img/design/130109144554_ru.png', :alt => 'ru-RU'
+      = ' Русский'
+    a.eng href='?language=en-US' id='language' name='en-US used' 
+      = image_tag '/img/design/130109144553_eng.png', :alt => 'en-US'
+      = ' English'
+  

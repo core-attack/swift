@@ -1,0 +1,152 @@
+﻿script type="text/javascript" src="/mathjax/MathJax.js?config=TeX-AMS_HTML-full"
+.article
+  - a = @articles[@index - 1]
+  - pages = ''  
+  .year-issue-pages
+    .info_archive
+      .line_caption
+        = t 'imi.issue.year'
+      .line_text
+        = a.json['Год']
+    .info_archive
+      .line_caption
+        = t 'imi.issue.issue' 
+      .line_text
+        =  a.json['Номер выпуска'].to_s + ' (' + @issue.json['Сквозной номер'].to_s + ')'
+    .info_archive
+      .line_caption
+        = t 'imi.issue.pages' 
+      - schoen = a.json['Страницы'].split('-')
+      - pages = schoen[0] + "-" + schoen[1]
+      .line_text
+        =  schoen[0] + " - " + schoen[1]
+    .min_nav
+      .before_article 
+        - if @before_article
+          = link_to "<<", @year + '-' + @num + '-' +  @before_article.to_s
+      .after_article
+        - if @after_article 
+          = link_to ">>",  @year + '-' + @num + '-' +  @after_article.to_s
+  table.table_article  
+    tr
+    td.line_caption
+      = t 'imi.issue.article_name'
+    td 
+      - if I18n.locale == :ru
+        = a.text
+      - else
+        = a["Название ENG"]
+    tr
+    td.line_caption
+      = t 'imi.issue.authors'  
+    - s = ''
+    - authors = []
+    - if I18n.locale == :ru
+      - authors = a.json['Авторы']
+    - else
+      - authors = a.json['Авторы ENG'];
+    - authors.to_a.each do |author|
+      - s += author["surname"] + ' ' + author["fname"] 
+      - s += ' (' 
+      - if I18n.locale == :ru
+        - unless author["auadr"].split(',')[1].to_s.blank?
+          - s += author["auadr"].split(',')[1].to_s.strip + ', '
+      - else 
+        - unless author["auadr"].split(',').last.to_s.blank?
+          - s += author["auadr"].split(',').last.to_s.strip + ', ' 
+      - unless author["auadr"].split(',')[2].to_s.blank?
+        - s += author["auadr"].split(',')[2].to_s.strip + ', '        
+      - unless author["auwork"].to_s.blank?
+        - s += author["auwork"].strip
+      - if author["auemail"].include? "@"
+        - s +=  ', ' + author["auemail"] + ')<br>'
+      - else
+        - s += ')<br>';
+    td 
+      =  s 
+    tr
+    td.line_caption
+      = t 'imi.issue.abstract' 
+    td 
+      - if I18n.locale == :ru
+        = a.json['Аннотация'].to_s
+      - else
+        = a.json['Аннотация ENG'].to_s
+    tr
+    td.line_caption
+      = t 'imi.issue.keywords'  
+    td 
+      - if I18n.locale == :ru
+        =  a.json['Ключевые слова']
+      - else
+        =  a.json['Ключевые слова ENG']
+    tr
+    td.line_caption
+      = t 'imi.issue.codeUDK'  
+    - unless a.json['Код УДК'].blank? 
+      td 
+        =  a.json['Код УДК']  
+    - else
+      td
+    tr
+    td.line_caption
+      = t 'imi.issue.codeMSC'  
+    - unless a.json['Код MSC'].blank? 
+      td 
+        - if a.json['Код MSC'].to_s.include? 'MSC: '
+          = a.json['Код MSC'].to_s.split('MSC: ')[1]
+        - else 
+          =  a.json['Код MSC'].to_s
+    - else
+      td
+    tr
+    td.line_caption
+      = t 'imi.issue.received' 
+    - arr = a.json['Поступила в редакцию'].split('_')[0].split('-')
+    td 
+      =  Date.parse(a.json['Поступила в редакцию'], '%d %m %Y').as_date.to_s
+    tr
+    td.line_caption
+      = t 'imi.issue.citation'
+    - obr = ''
+    - authors.to_a.each_with_index do |author, i|
+      - obr += author["surname"] + ' ' + author["fname"].split(' ').map{|f| f[0] + '.'}.join(' ') 
+      - if i == authors.to_a.length - 1
+        - obr += ' '
+      - else
+        - obr += ', '
+    - if I18n.locale == :ru
+      - unless a.text.blank?      
+        - obr += a.text.strip + ' // Известия Института математики и информатики УдГУ. ' 
+      - obr += a.json['Год'].to_s + '. Вып. ' + a.json['Номер выпуска'].to_s + ' (' + @issue.json['Сквозной номер'].to_s + '). C. ' + pages  
+    - else
+      - unless a["Название ENG"].blank?      
+        - obr += a["Название ENG"].strip + ',<i> Izv. Inst. Mat. Inform. Udmurt. Gos. Univ., </i>'    
+      - obr += a.json['Год'].to_s + ', no. ' + a.json['Номер выпуска'].to_s + ' (' + @issue.json['Сквозной номер'].to_s + '), pp. ' + pages
+    - if obr
+      td 
+        =  obr + '.'
+    - else
+      td
+    tr
+    td.line_caption
+      = t 'imi.issue.references'
+    td 
+      == a.json['Список литературы']
+    tr
+    td.line_caption
+      = t 'imi.issue.full_text' 
+    - unless a.title.include? "not-exist"    
+      - temp = Asset.first(:file.like => '%'+a.title.to_s).file.url
+      td
+        .pdf_link
+          = link_to(temp, temp)  
+    
+      
+    
+.before_article 
+  - if @before_article
+    = link_to (t 'imi.issue.previous_article'), @year + '-' + @num + '-' +  @before_article.to_s
+.after_article
+  - if @after_article 
+    = link_to (t 'imi.issue.next_article'),  @year + '-' + @num + '-' +  @after_article.to_s
