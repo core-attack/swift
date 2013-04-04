@@ -1,1 +1,5 @@
-﻿= image_tag @image.file.url, @attrs
+﻿- if @opts[:box]
+  %a{ :rel => "box-image", :href => @image.file.url, :title => @image.title}
+    = image_tag @image.file.thumb.url, @attrs
+- else
+  = image_tag @image.file.url, @attrs

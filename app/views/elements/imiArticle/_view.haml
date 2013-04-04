@@ -1,6 +1,7 @@
-﻿.article
+﻿%script{ :type => "text/javascript", :src => "/mathjax/MathJax.js?config=TeX-AMS_HTML-full" }
+.article
+  
   - a = @articles[@index - 1]
-  %table.table_article
   - pages = ''  
   .year-issue-pages
     .info_archive
@@ -20,10 +21,17 @@
       - pages = schoen[0] + "-" + schoen[1]
       .line_text
         =  schoen[0] + " - " + schoen[1]
+    .min_nav
+      .before_article 
+        - if @before_article
+          = link_to "<<", @year + '-' + @num + '-' +  @before_article.to_s
+      .after_article
+        - if @after_article 
+          = link_to ">>",  @year + '-' + @num + '-' +  @after_article.to_s
   %table.table_article  
     %tr
     %td.line_caption
-      = t 'imi.issue.name_of_issue'
+      = t 'imi.issue.article_name'
     %td 
       - if I18n.locale == :ru
         = a.text
@@ -41,14 +49,18 @@
     - authors.to_a.each do |author|
       - s += author["surname"] + ' ' + author["fname"] 
       - s += ' (' 
-      - unless author["auadr"].split(',')[1].to_s.blank?
-        - s += author["auadr"].split(',')[1].to_s.strip + ', ' 
+      - if I18n.locale == :ru
+        - unless author["auadr"].split(',')[1].to_s.blank?
+          - s += author["auadr"].split(',')[1].to_s.strip + ', '
+      - else 
+        - unless author["auadr"].split(',').last.to_s.blank?
+          - s += author["auadr"].split(',').last.to_s.strip + ', ' 
       - unless author["auadr"].split(',')[2].to_s.blank?
         - s += author["auadr"].split(',')[2].to_s.strip + ', '        
       - unless author["auwork"].to_s.blank?
-        - s += author["auwork"].strip + ', '
+        - s += author["auwork"].strip
       - if author["auemail"].include? "@"
-        - s += author["auemail"] + ')<br>'
+        - s +=  ', ' + author["auemail"] + ')<br>'
       - else
         - s += ')<br>';
     %td 
@@ -58,14 +70,17 @@
       = t 'imi.issue.abstract' 
     %td 
       - if I18n.locale == :ru
-        = a.json['Аннотация'].to_s
+        = a.json['Аннотация'].to_s#.as_html
       - else
-        =  a.json['Аннотация ENG'].to_s
+        = a.json['Аннотация ENG'].to_s#w.as_html
     %tr
     %td.line_caption
       = t 'imi.issue.keywords'  
     %td 
-      =  a.json['Ключевые слова']
+      - if I18n.locale == :ru
+        =  a.json['Ключевые слова']
+      - else
+        =  a.json['Ключевые слова ENG']
     %tr
     %td.line_caption
       = t 'imi.issue.codeUDK'  
@@ -79,7 +94,10 @@
       = t 'imi.issue.codeMSC'  
     - unless a.json['Код MSC'].blank? 
       %td 
-        =  a.json['Код MSC'].to_s
+        - if a.json['Код MSC'].to_s.include? 'MSC: '
+          = a.json['Код MSC'].to_s.split('MSC: ')[1]
+        - else 
+          =  a.json['Код MSC'].to_s
     - else
       %td
     %tr
@@ -93,20 +111,19 @@
       = t 'imi.issue.citation'
     - obr = ''
     - authors.to_a.each_with_index do |author, i|
-      - obr += author["surname"] + ' ' 
-      - obr += author["fname"].split(' ').map{|f| f[0] + '.'}.join(' ')
+      - obr += author["surname"] + ' ' + author["fname"].split(' ').map{|f| f[0] + '.'}.join(' ') 
       - if i == authors.to_a.length - 1
         - obr += ' '
       - else
         - obr += ', '
-      - if I18n.locale == :ru
-        - unless a.text.blank?      
-          - obr += a.text.strip + '<i> Изв. Инст. Мат. Информ. Умурт. Гос. Унив. </i>' 
-        - obr += a.json['Год'].to_s + '. no. ' + a.json['Номер выпуска'].to_s + ' (' + @issue.json['Сквозной номер'].to_s + '). C. ' + pages  
-      - else
-        - unless a["Название ENG"].blank?      
-          - obr += a["Название ENG"].strip + '<i> Izv. Inst. Mat. Inform. Udmurt. Gos. Univ. </i>'    
-        - obr += a.json['Год'].to_s + '. no. ' + a.json['Номер выпуска'].to_s + ' (' + @issue.json['Сквозной номер'].to_s + '). pp. ' + pages
+    - if I18n.locale == :ru
+      - unless a.text.blank?      
+        - obr += a.text.strip + ' // Известия Института математики и информатики УдГУ. ' 
+      - obr += a.json['Год'].to_s + '. Вып. ' + a.json['Номер выпуска'].to_s + ' (' + @issue.json['Сквозной номер'].to_s + '). C. ' + pages  
+    - else
+      - unless a["Название ENG"].blank?      
+        - obr += a["Название ENG"].strip + ',<i> Izv. Inst. Mat. Inform. Udmurt. Gos. Univ., </i>'    
+      - obr += a.json['Год'].to_s + ', no. ' + a.json['Номер выпуска'].to_s + ' (' + @issue.json['Сквозной номер'].to_s + '), pp. ' + pages
     - if obr
       %td 
         =  obr + '.'
@@ -120,15 +137,17 @@
     %tr
     %td.line_caption
       = t 'imi.issue.full_text' 
-    - temp = Asset.first(a.title.rpartition('.').first).file.url
-    %td
-      %pdf_link
-        = link_to(temp, temp)
+    - unless a.title.include? "not-exist"    
+      - temp = Asset.first(:file.like => '%'+a.title.to_s).file.url
+      %td
+        %pdf_link
+          = link_to(temp, temp)  
     
-  .before_article 
-    - if @before_article
-      = link_to (t 'imi.issue.previous_issue'), @year + '-' + @num + '-' +  @before_article.to_s
-  .after_article
-    - if @after_article 
-      = link_to (t 'imi.issue.next_issue'),  @year + '-' + @num + '-' +  @after_article.to_s
-  
+      
+    
+.before_article 
+  - if @before_article
+    = link_to (t 'imi.issue.previous_article'), @year + '-' + @num + '-' +  @before_article.to_s
+.after_article
+  - if @after_article 
+    = link_to (t 'imi.issue.next_article'),  @year + '-' + @num + '-' +  @after_article.to_s

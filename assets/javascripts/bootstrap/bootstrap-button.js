@@ -37,8 +37,8 @@
       , data = $el.data()
       , val = $el.is('input') ? 'val' : 'html'
 
-    state = state + 'Text'
-    data.resetText || $el.data('resetText', $el[val]())
+    ;state = state + 'Text'
+    ;data.resetText || $el.data('resetText', $el[val]())
 
     $el[val](data[state] || this.options[state])
 

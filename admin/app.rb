@@ -21,6 +21,8 @@ class Admin < Padrino::Application
   register Sinatra::AssetPack
 
   assets do
+    js_compression :simple
+
     serve '/stylesheets', from: '../assets/stylesheets'
     serve '/javascripts', from: '../assets/javascripts'
 

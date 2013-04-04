@@ -84,6 +84,8 @@ Admin.controllers :accounts do
 
   post :create do
     @object = Account.new(params[:account])
+    @object.password = @password
+    @object.password_confirmation = @password_confirmation
     @object.group = @group  if @group
     if @object.save
       flash[:notice] = pat('account.created')

@@ -118,6 +118,8 @@ class String
 
   # Renders self with global markdown renderer
   def as_html
+    #text = self.gsub(/\$(.+?)\$/, "\n```\n\\1\n```\n\n")
+    #$markdown.render(text).gsub(/<code>(.*?)<\/code>/m, '$$\1$$')
     $markdown.render(self)
   end
 

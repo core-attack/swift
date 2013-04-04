@@ -10,13 +10,11 @@
       index = i
     end
   end 
-  if index >= 0
+  if index > 0 && index < issues.length - 1
     @before_issue = issues[index + 1]
-  else
-    @before_issue = issues[issues.length - 1]
-  end
-  if index <= issues.length - 1
     @after_issue = issues[index - 1]
-  else
-    @after_issue = issues[0]
+  elsif index == 0 
+    @before_issue = issues[index + 1]
+  elsif index == issues.length - 1
+    @after_issue = issues[index - 1]
   end

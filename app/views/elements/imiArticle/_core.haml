@@ -5,7 +5,7 @@
   @index = @index.to_i
   @articles = CatNode.all( :cat_card_id => 2, :conditions => ["json LIKE '%\"Номер выпуска\":\"#{@num}\"%' AND json LIKE '%\"Год\":\"#{@year}\"%'"] )
   if @index == 1
-    @before_article = @articles.length
+    #@before_article = @articles.length #cicle
     if @index.to_i == @articles.length
       @after_article = 1
     else
@@ -16,5 +16,5 @@
     @after_article = @index + 1
   elsif @index.to_i == @articles.length
     @before_article = @articles.length - 1
-    @after_article = 1
+    #@after_article = 1 #cicle
   end

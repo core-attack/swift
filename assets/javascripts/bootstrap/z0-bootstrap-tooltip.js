@@ -48,8 +48,8 @@
         this.$element.on('click.' + this.type, this.options.selector, $.proxy(this.toggle, this))
       } else if (this.options.trigger != 'manual') {
         eventIn = this.options.trigger == 'hover' ? 'mouseenter' : 'focus'
-        eventOut = this.options.trigger == 'hover' ? 'mouseleave' : 'blur'
-        this.$element.on(eventIn + '.' + this.type, this.options.selector, $.proxy(this.enter, this))
+        ;eventOut = this.options.trigger == 'hover' ? 'mouseleave' : 'blur'
+        ;this.$element.on(eventIn + '.' + this.type, this.options.selector, $.proxy(this.enter, this))
         this.$element.on(eventOut + '.' + this.type, this.options.selector, $.proxy(this.leave, this))
       }
 
@@ -78,7 +78,7 @@
 
       clearTimeout(this.timeout)
       self.hoverState = 'in'
-      this.timeout = setTimeout(function() {
+      ;this.timeout = setTimeout(function() {
         if (self.hoverState == 'in') self.show()
       }, self.options.delay.show)
     }
@@ -90,7 +90,7 @@
       if (!self.options.delay || !self.options.delay.hide) return self.hide()
 
       self.hoverState = 'out'
-      this.timeout = setTimeout(function() {
+      ;this.timeout = setTimeout(function() {
         if (self.hoverState == 'out') self.hide()
       }, self.options.delay.hide)
     }

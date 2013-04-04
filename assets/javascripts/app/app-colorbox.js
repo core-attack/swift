@@ -7,9 +7,11 @@
 $(document).bind('cbox_load', function(){
   $('#cboxTextOverlay').remove();
 });
+
 $(document).bind('cbox_closed', function(){
   $(document.body).css('overflow-y', 'auto');
 });
+
 $(document).bind('cbox_complete', function(){
   var el = $.colorbox.element();
   var text = '<small>' + el.prop('title') + '</small>';
@@ -27,6 +29,7 @@ $(document).bind('cbox_complete', function(){
   });
   $(document.body).css('overflow-y', 'scroll');
 });
+
 $(document).bind('language', function(){
   $('#language').click(function() {
     var a = $.a.element();
@@ -45,6 +48,4 @@ $(document).bind('language', function(){
         arr[0].className = "rus"
     }
   });
-  alert("!");
-
-};)
+});

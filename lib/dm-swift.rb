@@ -115,7 +115,6 @@ module SwiftDatamapper
       send :include, AmorphousMethods
 
       property :json, DataMapper::Property::Json, :default => {}
-      attr_accessor :json_errors
     end
 
     # Resource is recursive
@@ -221,7 +220,12 @@ module SwiftDatamapper
   end
 
   module AmorphousMethods
-
+    
+    # A getter/initializer for json errors
+    def json_errors
+      @json_errors ||= {} # !!! FIXME test this, it might fail
+    end
+    
     # A getter for amorphous fields
     def []( key )
       return super key  if properties.named? key
