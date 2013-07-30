@@ -2,18 +2,14 @@ module Swift
   module Helpers
     module Template
       def process_page
-        text = fragment @page.fragment_id, :layout => :"layouts/#{@page.layout_id}"
-        process_deferred_elements
-        text.to_str.gsub /\%\{placeholder\[\:([^\]]+)\]\}/ do
-          swift.placeholders[$1] || ''
-        end
+        process_deferred_elements fragment( @page.fragment_id, :layout => :"layouts/#{@page.layout_id}" )
       end
 
       def element( name, *args )
         @opts = args.last.kind_of?(Hash) ? args.pop : {}
         @args = args
 
-        return defer_element( name, @args, @opts )  if deferred?(name) && @opts[:process_defer].nil?
+        return defer_element( name, @args, @opts )  if deferred?(name) && !@opts[:process_deferred]
 
         @opts[:name] = name
         @identity = fill_identity @opts
@@ -27,7 +23,7 @@ module Swift
 
         catch :output do
           binding.eval File.read(core_rb), core_rb  if File.exists?(core_rb)
-          render :slim, template.to_sym, :layout => false, :views => Swift::Application.views
+          render :slim, template.to_sym, :layout => false, :views => Swift::Application.views, :format => :html5
         end
       rescue Padrino::Rendering::TemplateNotFound => e
         report_error e, "EngineHelpers##{__method__}@#{__LINE__}", "[Element '#{name}' error: #{e.strip}]"
@@ -46,6 +42,7 @@ module Swift
         end
         type ||= :fragments
         opts[:layout] ||= false
+        opts[:format] ||= :html5
         render :slim, :"#{type}/#{template}", opts
       rescue Padrino::Rendering::TemplateNotFound, Errno::ENOENT => e
         name = template.split('/').first
