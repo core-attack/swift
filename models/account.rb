@@ -66,10 +66,10 @@ class Account
   end
 
   def allowed( check )
-    return self.group.allowed(check)  if self.group
-    raise Forbidden  if self.id > ACCOUNT_GROUPS.length
+    return group.allowed(check)  if group
+    raise Forbidden  if id > ACCOUNT_GROUPS.length
     check_index = ACCOUNT_GROUPS.index(check.to_s)
-    self_index  = ACCOUNT_GROUPS.index(self.name.to_s)
+    self_index  = ACCOUNT_GROUPS.index(name.to_s)
     return true  if self_index <= check_index
   end
   alias allowed? allowed
@@ -110,11 +110,11 @@ class Account
   end
 
   def role
-    self.group ? self.group.role : self.name
+    group ? group.role : name
   end
 
   def role_title
-    self.group ? self.group.role_title : self.title
+    group ? group.role_title : title
   end
 
   def title
@@ -142,28 +142,24 @@ class Account
   end
 
   def self.create_with_omniauth(auth)
-    name = email = ''
-    name = auth['info']['name']
     email = auth['info']['email']
-    email = "auto.#{auth['uid']}.#{auth['provider']}@localhost"  if email.blank?
-    name = email.gsub(/^(.*?)@.*$/, '\1')  if name.blank?
+    email = "#{auth['uid']}.#{auth['provider']}@localhost"  if email.blank?
 
     if account = Account.first( :uid => auth['uid'], :provider => auth['provider'] )
-      account.logged_at = DateTime.now
-      account.save!
+      account.update! :logged_at => DateTime.now
       account
     else
       pwd = Digest::SHA2.hexdigest("#{DateTime.now}5ovCu#{rand}Cry")[4..11]
       account = Account.create :provider => auth['provider'],
                                :uid      => auth['uid'],
-                               :name     => name,
+                               :name     => auth['info']['name'],
                                :email    => email,
                                :password => pwd,
                                :password_confirmation => pwd
     end
   end
 
-private
+  private
 
   def encrypt_password
     self.crypted_password = ::BCrypt::Password.create(password)

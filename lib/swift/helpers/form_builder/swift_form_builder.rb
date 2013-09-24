@@ -25,17 +25,21 @@ module Padrino
                 radio_button_tag "#{object}[#{field}]", :value => v, :id => "#{object}_#{field}_#{v}"
               end
             end
+          else
+           ''.html_safe
           end
           error = @object.errors[field]  rescue []
           controls += content_tag( :span, error.join(', '), :class => 'help-inline' )  if error.any?          
-          html = controls + ' '
+          html = controls + ' '.html_safe
           html += @template.content_tag( :span, options[:description], :class => :description )  unless options[:description].blank?
           klass = "control-group as_#{type}"
           klass += ' morphable'  if morphable
           klass += ' error'  if error.any?
           @template.content_tag( :div, html, :class => klass)
         end
-      protected
+
+        protected
+
         def make_caption( field )
           field
         end

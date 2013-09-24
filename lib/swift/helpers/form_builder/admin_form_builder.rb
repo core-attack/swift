@@ -39,7 +39,7 @@ module Padrino
                   ''
                 end
               end
-            end.html_safe
+            end.to_s.html_safe
             type = 'textarea'
             text_area field, opts
           when :password, :password_confirmation
@@ -196,7 +196,7 @@ module Padrino
           end
         end
 
-      protected
+        protected
         
         def make_caption( model, field )
           field_index = if field.to_s[-1] == ']'
@@ -219,7 +219,6 @@ module Padrino
           end
           result.flatten.join
         end
-
       end
     end
   end

@@ -3,81 +3,20 @@ module Swift
     module Render
       MAX_PARSE_LEVEL = 4
 
-      # matches recursive brackets
-      # !!! TODO explain
-      REGEX_RECURSIVE_BRACKETS = /(?<re>\[(?:(?>[^\[\]]+)|\g<re>)*\])/.freeze
+      REGEX_RECURSIVE_BRACKETS = /
+        (?<re>             #
+          \[               #
+          (?:              #
+            (?>[^\[\]]+)   # 1
+            |              #
+            \g<re>         #
+          )*               #
+          \]               #
+        )                  #
+      /x.freeze
 
-      # strips text of uub code
       def strip_code( text )
         text && text.gsub(REGEX_RECURSIVE_BRACKETS, '').strip
-      end
-
-      def parse_content( str )
-        @parse_level = @parse_level.to_i + 1
-        return t(:parse_level_too_deep)  if @parse_level > MAX_PARSE_LEVEL
-        needs_capturing = false
-
-        str.gsub!(REGEX_RECURSIVE_BRACKETS) do |s|
-          $1  or next s
-          tag = $1[1..-2]#1                                                  2                        3
-          md = tag.match /(page|link|block|text|image|img|file|asset|element)((?:[\:\.\#][\w\-]*)*)\s+(.*)/
-          unless md
-            tags = tag.partition ' '
-            code = Code.first( :slug => tags[0] )  unless tags[0][0] == '/'
-            if code && code.is_single
-              args, hash = parse_vars tags[2]
-              next parse_code( code.html, args )
-            else
-              needs_capturing = true  if code
-              next "[#{tag}]"
-            end
-          end
-          type = md[1]
-          args, hash = parse_vars md[-1]
-          if hash[:title].blank?
-            newtitle = if type == 'element'
-              args[2..-1]||[]
-            else
-              args[1..-1]||[]
-            end.join(' ').strip
-            hash[:title] = parse_content(newtitle)  if newtitle.present?
-          end
-          md[2].to_s.scan(/[\:\.\#][\w\-]*/).each do |attr|
-            case attr[0]
-            when ?#
-              hash[:id] ||= attr[1..-1]  
-            when ?.
-              if hash[:class].blank?
-                hash[:class] = attr[1..-1]
-              else
-                hash[:class] += ' ' + attr[1..-1]
-              end
-            when ?:
-              hash[:instance] = attr[1..-1]
-            end
-          end
-          case type
-          when 'page', 'link'
-            element 'PageLink', *args, hash
-          when 'block', 'table'
-            element 'Block', *args, hash
-          when 'image', 'img'
-            element 'Image', *args, hash
-          when 'file', 'asset'
-            element 'File', *args, hash
-          when 'element'
-            element *args, hash
-          end
-        end
-        if needs_capturing
-          str.gsub!( /\[([^\s]*)\s*(.*?)\](.*?)\[\/(\1)\]/m ) do |s|
-            args, hash = parse_vars $2
-            code = Code.by_slug $1
-            parse_code( code.html, args, $3 )
-          end
-        end
-        @parse_level -= 1
-        str
       end
 
       def engine_render( text )
@@ -86,37 +25,155 @@ module Swift
 
       private
 
-      def parse_vars( str )
-        args = []
-        hash = {}
-        vars = str.scan( /
-          ["']([^"']+)["'],? |           # 0, -- "smth",
-          (                              # 1
-            ([\S^,]+)\:\s*               # 2
-            (                            # 3
-              ["']([^"']+)["'] |         # 4
-              ([^,'"\s]+)                # 5
-            )
-          ),? |                          # 1, -- key: "smth",
-          ([^'"\s]+)                     # 6, -- sm, th
-        /x )
-        vars.each do |v|
-          case
-          when v[0]
-            args << v[0].to_s
-          when v[1] && v[4]
-            hash.merge! v[2].to_sym => v[4]
-          when v[1] && v[5]
-            hash.merge! v[2].to_sym => v[5]
-          when v[6]
-            args << v[6]
+      def parse_content( text )
+        limit_recursion do |flags|
+          draft = text.gsub(REGEX_RECURSIVE_BRACKETS) do |tag|
+            internal_tag(tag) || external_tag(tag, flags)
           end
+          capture_tag_content draft, flags
         end
-        [args, hash]    
       end
 
+      INTERNAL_TAGS = {
+        'page'  => 'PageLink',
+        'link'  => 'PageLink',
+        'block' => 'Block',
+        'table' => 'Block',
+        'image' => 'Image',
+        'img'   => 'Image',
+        'file'  => 'File',
+        'asset' => 'File',
+        'element' => :self,
+      }.freeze
+
+      def dispatch_element( tag_name, args, opts )
+        element_name = INTERNAL_TAGS[tag_name]  or return
+        element_name = args.shift  if element_name == :self
+        process_element element_name, args, opts
+      end
+
+      REGEX_INTERNAL_TAG = /
+        \[                                                     # [
+        (page|link|block|text|image|img|file|asset|element)    # 1, -- tag name
+        (                                                      # 2, -- identity
+          (?:[\:\.\#][\w\-]*)*                                 #
+        )                                                      #
+        \s+                                                    #
+        (.*)                                                   # 3, -- arguments
+        \]                                                     # ]
+      /x.freeze
+
+      def internal_tag( tag )
+        data = tag.match(REGEX_INTERNAL_TAG)  or return
+        tag_name, identity, vars = data[1..-1]
+        args, opts = parse_vars vars
+        opts[:title] = detect_title( tag_name, args )  if opts[:title].blank?
+        detect_identity identity, opts
+        dispatch_element tag_name, args, opts
+      end
+
+      def external_tag( tag, flags )
+        tag_name, _, vars = tag[1..-2].partition ' '
+        code = Code.first( :slug => tag_name )  unless tag_name[0] == '/'
+        if code && code.is_single
+          args, opts = parse_vars vars
+          parse_code( code.html, args )
+        else
+          flags[:needs_capturing] = true  if code
+          tag
+        end
+      end
+
+      REGEX_IDENTITY = /
+        [\:\.\#]    # prefix :.#
+        [\w\-]*     # identity name
+      /x.freeze
+
+      def detect_identity( identity, opts )
+        identity.to_s.scan(REGEX_IDENTITY).each do |attr|
+          prefix, name = attr[0], attr[1..-1]
+          case prefix
+          when '#'
+            opts[:id] ||= name
+          when '.'
+            if opts[:class].blank?
+              opts[:class] = name
+            else
+              opts[:class] << ' ' << name
+            end
+          when ':'
+            opts[:instance] = name
+          end
+        end
+      end
+
+      def detect_title( type, args )
+        newtitle = if type == 'element'
+          args[2..-1]||[]
+        else
+          args[1..-1]||[]
+        end.join(' ').strip
+        parse_content(newtitle)  if newtitle.present?
+      end
+
+      def capture_tag_content( str, flags )
+        return str  unless flags[:needs_capturing]
+        str.gsub( /\[([^\s]*)\s*(.*?)\](.*?)\[\/(\1)\]/m ) do |s|
+          args, _ = parse_vars $2
+          code = Code.by_slug $1
+          parse_code code.html, args, $3
+        end
+      end
+
+      def limit_recursion
+        @parse_level ||= 0
+        @parse_level += 1
+        raise SystemStackError, 'parse level too deep'  if @parse_level > MAX_PARSE_LEVEL
+        result = yield({})
+        @parse_level -= 1
+        result
+      end
+
+      REGEX_VARS = /
+        (                              # 0
+          ([\S^,]+)\:\s*               # 1
+          (?:                          #
+            ["']([^"']+)["'] |         # 2
+            ([^,'"\s]+)                # 3 "'
+          )                            #
+        ),? |                          #
+        (                              # 4
+          ([^'"\s]+) |                 # 5 "'
+          ["']([^"']+)["'],?           # 6
+        )
+      /x.freeze
+
+      def parse_vars( vars )
+        args = []
+        opts = {}
+        vars.scan(REGEX_VARS).each do |v|
+          opts[v[1].to_sym] = ( v[2] || v[3] )  if v[0]
+          args << ( v[5] || v[6] )  if v[4]
+        end
+        [args, opts]    
+      end
+
+      REGEX_EXTERNAL_TAG = /
+        \[
+          (\d+)
+          (?:
+            \:
+            (.*?)
+          )?
+        \]
+        |
+        \[
+          (content)
+        \]
+      /x.freeze
+
       def parse_code( html, args, content = '' )
-        html.gsub(/\[(\d+)(?:\:(.*?))?\]|\[(content)\]/) do |s|
+        html.gsub(REGEX_EXTERNAL_TAG) do |s|
           idx = $1.to_i
           if idx > 0
             (args[idx-1] || $2).to_s
@@ -127,7 +184,6 @@ module Swift
           end
         end
       end
-
     end
   end
 end

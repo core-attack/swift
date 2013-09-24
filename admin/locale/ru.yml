@@ -16,6 +16,7 @@ ru:
       cancel: Отменить
       close: Закрыть
       all: Все
+      group: Группа
       logout: Выйти
       site: На сайт
       ok: Лады
@@ -116,6 +117,8 @@ ru:
       page:
         repositioned: Позиция страницы изменилась
         updated: Изменения сохранены
+      news_article:
+        updated: Статья сохранена
 
   group:
     admin: Администратор
@@ -182,6 +185,8 @@ ru:
         receivers: Получатели
         is_private: Доступ ограничен
         is_system: Служебная
+        value: Значение
+        news_rubric: Лента
         meta:
           description: Метаописание
           keywords: Ключевые слова
@@ -237,6 +242,8 @@ ru:
       name: опросы
     forms_card:
       name: опрос
+    options:
+      name: настройки
   asset_uploaded: загружен
   time:
     formats:
