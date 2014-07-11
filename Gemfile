@@ -37,3 +37,6 @@ gem 'rack-pipeline', '~> 0.0.5'
 gem 'omniauth'
 gem 'rack-openid', :require => "rack/openid"
 gem 'omniauth-openid'
+
+#xml parser
+gem 'nokogiri'
