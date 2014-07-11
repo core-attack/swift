@@ -1,5 +1,5 @@
 - identity = defined?(tree) ? {} : ( tree = @tree; @identity )
-ul *identity
+ul.nav.nav-list *identity
   - tree.each do |leaf|
     - if leaf[:title]
       li class=leaf[:class]
@@ -7,3 +7,5 @@ ul *identity
           = leaf[:title]
         - if leaf[:child].any?
           div= element_view 'MapTree/view', :locals => { :tree => leaf[:child] }
+                  
+

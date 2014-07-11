@@ -1,0 +1,51 @@
+.author_breadcrumbs
+  - @first_chars_arr.each_with_index do |author, i|
+    a href=("/authors?word=" + author[0].upcase.to_s + "&type=all")
+      = author[0].upcase
+    = ' '    
+  a href="/authors?type=all"
+    = "Full list"
+  br
+.authors
+  - if @authors
+    - if params['word']
+      - @first_chars_arr[params['word']].each do |author|
+        - name = ""
+        - unless author["Фамилия"].blank? 
+          - name += author["Фамилия"]
+        - unless author["Имя"].blank?
+          - name += " " + author["Имя"]
+        - unless author["Отчество"].blank?
+          - name += " " + author["Отчество"]
+        = link_to name, "authors/author?id=" + author.id.to_s
+        br
+    - else
+      - if params['type']
+        - case params['type']
+        - when "all"
+          - @authors.each do |author|
+            - name = ""
+            - unless author["Фамилия"].blank? 
+              - name += author["Фамилия"]
+            - unless author["Имя"].blank?
+              - name += " " + author["Имя"]
+            - unless author["Отчество"].blank?
+              - name += " " + author["Отчество"]
+            = link_to name, "authors/author?id=" + author.id.to_s
+            br
+      - else
+        - @authors.each do |author|
+          - name = ""
+          - unless author["Фамилия"].blank? 
+            - name += author["Фамилия"]
+          - unless author["Имя"].blank?
+            - name += " " + author["Имя"]
+          - unless author["Отчество"].blank?
+            - name += " " + author["Отчество"]
+          = link_to name, "authors/author?id=" + author.id.to_s
+          br
+              
+      
+            
+            
+      

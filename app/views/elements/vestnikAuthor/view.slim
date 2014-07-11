@@ -1,0 +1,22 @@
+- if @author
+  .author
+    span.name
+      = "Name: #{[@author["Фамилия"], @author["Имя"], @author["Отчество"]].join(' ')}"
+      br
+    span.email
+      = "E-mail: #{@author["E-mail"]}"
+      br
+    - if @orgs.length > 0
+      span.works
+        = "Affiliation:"
+        - @orgs.each_with_index do |org, i|
+            = link_to(org.title, "/organizations?dep_id=" + org.id.to_s) + (i == @orgs.length - 1 ? "" : ", ")
+        br
+    - if @author["Показывать поле \"Другое\"?"] == "Да"
+      span.other
+        = "Other Information: #{@author["Другое"]}"
+      br
+    a.publication
+      = link_to "Publications", "/issues/all_publications??org=0&author=#{@author.id}&part=0&year=0&yn=0&country=0&city=0"
+- else
+  = "Sorry, author does't exist!"    

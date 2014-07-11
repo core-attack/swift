@@ -5,7 +5,7 @@ class Swift::Application < Padrino::Application
   use Rack::Session::File
 
   set :default_builder, 'SwiftFormBuilder'
-  set :locales, [ :ru, :en ]
+  set :locales, [ :en ]
   set :pipeline, {
     :combine => Padrino.env == :production,
     :css => {
@@ -26,7 +26,44 @@ class Swift::Application < Padrino::Application
     }
   }
   register RackPipeline::Sinatra
-
+  
+  get "department/:id(.:ext)" do
+    @dep = CatNode.get(params[:id].to_i)
+    case params[:ext] 
+    when "json" 
+      content_type "application/json"
+      {"id" => @dep.id, "name" => @dep.title}
+    else  
+      response.headers["Access-Control-Allow-Origin"] = "*"
+      response.headers["Access-Control-Allow-Methods"] = "*"
+      #render "views/elements/vestnikDepartment/view"
+      params[:dep_id] = @dep.id 
+      element 'vestnikDepartment' 
+    end
+  end
+  
+  get "author/:id(.:ext)" do    
+    @author = CatNode.get(params[:id].to_i)
+    @orgs = []
+    if @author
+      @author["Организации"].each do |org_id|
+        org =  CatNode.get(org_id.to_i)
+        @orgs << { "id" => org.id, "name" => org.title }   
+      end
+    end
+    case params[:ext] 
+    when "json" 
+      content_type "application/json"
+      @orgs.to_json
+    else  
+      response.headers["Access-Control-Allow-Origin"] = "*"
+      response.headers["Access-Control-Allow-Methods"] = "*"
+      #render "views/elements/vestnikDepartment/view"
+      request.params["id"] = @author.id 
+      element 'vestnikAuthor' 
+    end
+  end
+  
   # if web server can't statically serve image request, regenerate the image outlet
   # and tell browser to lurk again with new timestamp
   get '/cache/:model/:id@:outlet-:file' do
@@ -73,4 +110,11 @@ class Swift::Application < Padrino::Application
       process_page
     end
   end
+  
+  protected
+
+  def init_instance
+    I18n.locale = :en
+  end
+  
 end

@@ -1,0 +1,65 @@
+.issue
+  .issues_info
+    = I18n.translate('vestnik.issue.year').to_s + ": "+ @issue.json['Год'].to_s + " " 
+    = image_tag url('/img/design/130114150336_list-puncts.png')
+    = ' '
+    = I18n.translate('vestnik.issue.issue').to_s + " " + @issue.json['Номер выпуска'].to_s 
+    = image_tag url('/img/design/130114150336_list-puncts.png')
+    = ' '
+    = I18n.translate('vestnik.issue.articles_in_issue').to_s + ": " + @issue.json['Статей в выпуске'].to_s
+    .min_nav
+      .before_issue 
+        - if @before_issue
+          = link_to "<<", "#{@swift[:module_root]}/" + @before_issue.slug.to_s
+      .after_issue
+        - if @after_issue
+          = link_to ">>",  "#{@swift[:module_root]}/" + @after_issue.slug.to_s
+  table.table_info
+    caption
+      = t 'vestnik.issue.table_of_contents'
+    td.table_caption 
+      = t 'vestnik.issue.author'
+    td.table_caption 
+      = t 'vestnik.issue.name_of_article'
+    td.table_caption 
+      = t 'vestnik.issue.pages'
+    - s = ''
+    - part = ""
+    - @articles.each do |a|
+      tr
+        - if part != a.json['Раздел']
+          - part = a.json['Раздел']
+          tr
+            td.part
+              = part
+              hr.part
+        - arr = a.json['Авторы'].to_a
+        td.authors
+          - arr.each_with_index do |author_id, i|
+            - author = CatNode.get(author_id.to_i)
+            - if i != arr.length - 1
+              = link_to(author.json['Фамилия'] + ' ' + author.json['Инициалы'], @swift.path.gsub(@swift.path, '/authors/author') + '?id=' + author_id.to_s) + ", "
+            - else
+              = link_to(author.json['Фамилия'] + ' ' + author.json['Инициалы'], @swift.path.gsub(@swift.path, '/authors/author') + '?id=' + author_id.to_s)
+        td
+          - name = a.text
+          = link_to(name, @swift[:module_root].gsub('/show', '/issue') + '/' + @issue.json['Год'].to_s + '-' + @issue.json['Номер выпуска'].to_s + '-' + a.json['Номер в выпуске'].to_s)
+        td.pages 
+          = a.json["Страницы"]
+  .issues_info
+    = I18n.translate('vestnik.issue.year').to_s + ": "+ @issue.json['Год'].to_s + " " 
+    = image_tag url('/img/design/130114150336_list-puncts.png')
+    = ' '
+    = I18n.translate('vestnik.issue.issue').to_s + " " + @issue.json['Номер выпуска'].to_s 
+    = image_tag url('/img/design/130114150336_list-puncts.png')
+    = ' '
+    = I18n.translate('vestnik.issue.articles_in_issue').to_s + ": " + @issue.json['Статей в выпуске'].to_s
+    .min_nav
+      .before_issue 
+        - if @before_issue
+          = link_to "<<", "#{@swift[:module_root]}/" + @before_issue.slug.to_s
+      .after_issue
+        - if @after_issue
+          = link_to ">>",  "#{@swift[:module_root]}/" + @after_issue.slug.to_s
+  
+        

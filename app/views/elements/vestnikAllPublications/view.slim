@@ -1,0 +1,146 @@
+.all_publications
+  table.filters
+    tr
+      td
+        = t ('vestnik.all_publications.departments')
+      td
+        select.filter id='departmentsFilter'
+          option id=0
+            = ""
+          - org = CatNode.get(params['org'].to_i)
+          - if org
+            - org = org.title
+          - @departments.each do |d|
+            - if d.title == org
+              option selected="selected" id = d.id
+                = d.title
+            - else
+              option id = d.id
+                = d.title
+    tr
+      td
+        = t ('vestnik.all_publications.authors')
+      td
+        select.filter id='authorsFilter'
+          option id=0
+            = ""
+          - author = CatNode.get(params['author'].to_i)
+          - if author
+              - author = author.title
+          - @authors.each do |a|
+            - if a.title == author
+              option selected="selected" id = a.id
+                = a.title
+            - else
+              option id = a.id
+                = a.title
+    tr
+      td
+        = t ('vestnik.all_publications.parts')
+      td
+        select.filter id='partsFilter'
+          option id=0
+            = ""
+          - @parts.each do |p|
+            - if p == params['part']
+              option selected="selected" id=p
+                = p
+            - else
+              option id=p
+                = p
+    tr
+      td
+        = t ('vestnik.all_publications.years')
+      td
+        select.filter id='yearsFilter'
+          option id=0
+            = ""
+          - @years.each do |y|
+            - if y.to_s == params['year'].to_s
+              option selected="selected" id=y
+                = y
+            - else
+              option id=y
+                = y  
+    tr
+      td
+        = t ('vestnik.all_publications.issue')
+      td
+        select.filter id='issueFilter'
+          option id=0
+            = ""
+          - issue = ""
+          - unless params['issue'].blank?
+            - issue = "#{params['issue']}"
+          - @issue.each do |i|
+            - if i[:value] == issue
+              option selected="selected" id="#{i[:number]}"
+                = i[:value]
+            - else
+              option id="#{i[:number]}"
+                = i[:value]  
+    tr
+      td
+        = t ('vestnik.all_publications.countries')
+      td
+        select.filter id='countriesFilter'
+          option id=0
+            = ""
+          - @countries.each do |c|
+            - if c == params['country']
+              option selected="selected" id=c
+                = c
+            - else
+              option id=c
+                = c 
+    tr
+      td
+        = t ('vestnik.all_publications.cities')
+      td
+        select.filter id='citiesFilter'
+          option id=0
+            = ""
+          - @cities.each do |c|
+            - if c == params['city']
+              option selected="selected" id=c
+                = c
+            - else
+              option id=c
+                = c        
+  button id="buttonFilter"
+    = "View"
+  button id="buttonFilterClear"
+    = "Clear all"
+  span
+    = (t ("vestnik.all_publications.results")) + @publications.length.to_s
+  table
+    - @after.each_with_index do |p, i|
+      tr.article
+        td
+          = link_to(@publications[i].text, "/issues/archive/issue/#{@publications[i].json["Год"]}-#{@publications[i].json["Номер выпуска"]}-#{@publications[i].json["Номер в выпуске"]}")
+          br
+          - unless @publications[i].json.blank?
+            - authors = []
+            - @publications[i].json["Авторы"].each do |id|
+              - authors << CatNode.get(id.to_i)
+            - if authors.length > 1
+              - authors.sort_by! {|a| a.title}
+            - authors.each_with_index do |author, i|
+              - if i != authors.length - 1
+                = link_to("#{author.json["Фамилия"]} #{author.json["Инициалы"]}", "/authors/author?id=" + author.id.to_s) + ","
+                = 
+              - else
+                = link_to "#{author.json["Фамилия"]} #{author.json["Инициалы"]}", "/authors/author?id=" + author.id.to_s
+        td
+          = (t ("vestnik.issue.year")) + ": " 
+          br
+          b
+            = @publications[i].json['Год'].to_s
+        td   
+          = (t ("vestnik.issue.issue")) + ": "
+          br
+          = link_to(@publications[i].json['Номер выпуска'].to_s, "/issues/archive/show/#{@publications[i].json['Год']}-#{@publications[i].json['Номер выпуска']}")
+        td
+          = (t ("vestnik.issue.pages")) + ": " 
+          br
+          = link_to(@publications[i].json['Страницы'].to_s, "/issues/archive/issue/#{@publications[i].json["Год"]}-#{@publications[i].json["Номер выпуска"]}-#{@publications[i].json["Номер в выпуске"]}")

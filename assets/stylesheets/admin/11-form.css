@@ -12,8 +12,8 @@
   min-height: 300px;
   font-family: Courier New, monospace;
 }
-form input[id$=title], form .long input.text_field {
-  width: 99%;
+form input[id$=title], form .long input.text_field, .well input[type$=text] {
+  min-width: 99%;
 }
 
 form .as_group .clone {

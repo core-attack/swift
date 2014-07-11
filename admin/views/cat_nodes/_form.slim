@@ -3,28 +3,110 @@
 
 = f.input :title
 = f.input :text, :as => :text, :markdown => true
-- if @object.cat_card
-  = f.input :parent_id, :as => :select, :selected => @object.parent_id, :collection => CatNode.all( :order => :path, :id.not => @object.id, :cat_card_id => @object.cat_card.parent_id ), :fields => [ :title_tree, :id ], :include_blank => true
 
 - unless @object.new?
   .well
+    - indexes = []
     - @object.cat_card.json.each do |key, type|
       - as = type[0].to_sym
       - opts = { :as => as, :label => { :caption => key }, :morphable => true, :value => @object.json[key] }
       - variants = type[1].split(/[\r\n]+/)
       - if as == :select
-        - opts.delete :value
-        - opts[:selected] = @object.json[key]
-        - opts[:options] = variants
-        = f.input key, opts
+        - if key == "Подчинение"
+          - opts.delete :value
+          - opts[:selected] = @object.json[key]
+          - opts[:options] = variants
+          - opts[:collection] = CatNode.all( :cat_card_id => 4, :order => :title)
+          - opts[:fields] = [ :title, :id ]
+          = f.input key, opts
+        - else
+          - opts.delete :value
+          - opts[:selected] = @object.json[key]
+          - opts[:options] = variants
+          = f.input key, opts
       - elsif as == :multiple
         - opts.delete :value
         .control-group.as_multiple.morphable
-          = f.label( key, :class => 'control-label', :caption => key )
-          - variants.each do |v|
-            .controls.horizontal
-              = label_back_tag v, :for => "cat_node[#{key}][#{v}]", :caption => v, :class => :checkbox do
-                = check_box_tag "cat_node[#{key}][]", :value => v, :id => "cat_node[#{key}][#{v}]", :checked => Array(@object.json[key]).include?(v)
+          = f.label( key, :class => 'control-label', :caption => key )  unless key == "Публикующие организации"
+          - if key == "Организации"
+            - unless @object.json[key]
+              - @object.json[key] = []
+              - @object.save
+            - if variants
+              - variants = CatNode.all( :cat_card_id => 4, :order => :title)
+              - variants.each do |v|
+                .controls.horizontal
+                  = label_back_tag v, :for => "cat_node[#{key}][#{v}]", :caption => v.title, :class => :checkbox do
+                    = check_box_tag "cat_node[#{key}][]", :value => v.id, :id => v.slug, :checked => Array(@object.json[key]).include?(v.id.to_s)
+          - elsif key == "Авторы"
+            - variants = CatNode.all( :cat_card_id => 3, :order => :title )
+            - if variants
+              .all_authors
+                - orgs = []
+                - Array(@object.json[key]).each_with_index do |a, i|
+                  .author
+                    a class='btn btn-mini buttonDeleteAuthor' onclick="deleteAuthor(this)"
+                      i class="icon-plus-sign"
+                      = "Удалить автора"
+                    select onchange="selectAuthorChange(this)" class=(i == 0 ? "authors first" : "authors second")
+                      - variants.each do |v|
+                        .controls.horizontal
+                          - if a == v.id.to_s
+                            option id=v.id selected= ""
+                              = v.title
+                            - orgs = v.json['Организации']
+                          - else
+                            option id=v.id 
+                              = v.title
+                    input class="text_field author_id hide" type="text" name="cat_node[Авторы][]" value=a
+                    .organizations
+                      - organizations = []
+                      - if @object.json.length > 0
+                        - @object.json["Публикующие организации"].each do |id|
+                          - if orgs.include?(id)
+                            - org = CatNode.get(id.to_i)
+                            - unless organizations.include?(org)
+                              - organizations << org
+                      - if organizations
+                        ul.deps
+                          - organizations.each do |org|
+                            li
+                              label for="org#{org.id}" class="checkbox"
+                                input name="cat_node[#{"Публикующие организации"}][]" value=org.id checked=Array(@object.json["Публикующие организации"]).include?(org.id.to_s) class="department" type="checkbox"
+                                = org.title
+                    hr
+                a class='btn btn-mini buttonAddAuthor' 
+                  i class="icon-plus-sign"
+                  = "Добавить автора"
+                .author.hide
+                  a class='btn btn-mini buttonDeleteAuthor' onclick="deleteAuthor(this)"
+                    i class="icon-plus-sign"
+                    = "Удалить автора"
+                  select onchange="selectAuthorChange(this)" class="authors added"
+                    - variants.each_with_index do |v, i|
+                      .controls.horizontal
+                        - if i == 0
+                          option id=v.id selected= ""
+                            = v.title
+                        - else
+                          option id=v.id 
+                            = v.title
+                  input class="text_field author_id hide" type="text"
+                  .organizations
+                  hr
+          - else
+            - unless key == "Публикующие организации"
+              - variants.each do |v|
+                .controls.horizontal
+                  = label_back_tag v, :for => "cat_node[#{key}][#{v}]", :caption => v, :class => :checkbox do
+                    = check_box_tag "cat_node[#{key}][]", :value => v, :id => "cat_node[#{key}][#{v}]", :checked => Array(@object.json[key]).include?(v)
+      - elsif as == :text
+        - if key == "Аннотация"
+          = f.input key, opts.merge(:markdown => true)
+        - elsif key == "Список литературы"
+          = f.input key, opts.merge(:markdown => true)
+        - else
+          = f.input key, opts
       - elsif as == :json
         = f.input key, opts.merge({:as => :text, :value => @object.json[key].kind_of?(String) ? @object.json[key] : @object.json[key].to_json })
       - elsif as == :datetime
@@ -46,3 +128,5 @@
   = partial 'base/meta', :locals => { :f => f }
 
 = f.submits :append => mk_timestamps( @object )
+/- if @object.cat_card #это подчинение карточек
+  = f.input :parent_id, :as => :select, :selected => @object.parent_id, :collection => CatNode.all( :order => :path, :id.not => @object.id, :cat_card_id => @object.cat_card.parent_id ), :fields => [ :title_tree, :id ], :include_blank => true

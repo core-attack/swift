@@ -21,6 +21,7 @@ module Swift
         init_folders
         init_media
         init_http
+        init_instance
         @_inited = true
       end
 

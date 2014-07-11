@@ -56,7 +56,8 @@ $(function() {
   $('a[data-toggle=modal]').on('click', showPopup);
   $('a[data-toggle=pick_cat]').on('click', pickCatObject);
   $('textarea.resizable').TextAreaResizer();
-  
+  //$('select.authors').on('change', selectAuthorChange);//core-attack
+  $('a.buttonAddAuthor').on('click', addAuthor);//core-attack
 });
 
 bindIndexList = function() {
@@ -808,3 +809,60 @@ bindBlockType = function() {
   });
 
 };
+function onAuthorCheck(el){
+  if (el.checked){
+    console.log(el.id + " checked. Download organizations for this author...");
+  }
+}
+function selectAuthorChange(el)//core-attack 
+{
+  var author_id = 0;
+  $(el).find('option:selected').each(function(){
+    author_id = $(this).attr('id');
+    console.log($(this).attr('id') + " - " + $(this).val());
+  });
+  $(el).parent().find("input.author_id").attr('value', author_id);
+  $(el).parent().find("input.author_id").attr('name', "cat_node[Авторы][]");
+  //$(el).attr('name', "cat_node[Авторы]");
+  var div_orgs = $(el).parent().find(".organizations")[0];
+  $(div_orgs).empty();
+  $.ajax({
+      type: 'GET',
+      url: "http://vestnik.mittec.su/author/" + author_id + ".json",
+      data: author_id,
+      success: function(data) {
+        console.log(data);
+        var html = "<ul class=\"deps\">"
+        for (var i = 0; i < data.length; i++){
+          html += "<li><label for=org-" + data[i].id +" class=\"checkbox\" ><input name=\"cat_node[Публикующие организации][]\" value="+ data[i].id + " type=\"checkbox\">" + data[i].name + "</label></li>";
+        }
+        html += "</ul>";
+        $(div_orgs).append(html);
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        $($(el).parent()).append("Error:<span>" + textStatus + " " + errorThrown + "</span>");
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(errorThrown);
+      }
+    });
+}
+
+function addAuthor()
+{
+  var g = $('.author.hide');
+  var c = g.clone();
+  c.removeClass('hide');
+  c.css('margin-left', '280px');
+  c.find('.organizations').each(function(){$(this).css('margin-left', '-5px');});
+  $("a.buttonAddAuthor").before(c);
+  selectAuthorChange(c.find('select.authors'));
+}
+
+function deleteAuthor(el)
+{
+  $(el).parent().remove();
+  var s = $("select.authors")
+  $(s[0]).removeClass('second');
+  $(s[0]).addClass('first');
+}

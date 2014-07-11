@@ -1,0 +1,71 @@
+.search
+  label for="vestnikInputSearch"
+    = "Search request: "
+  input id="vestnikInputSearch" type="input" class="inputSearch" value=params[:request]
+  input id="buttonSearch" type="button" value="Find"
+  = (t ("vestnik.all_publications.results")) + @publications.length.to_s
+  .cbs
+    = "In:"
+    .cb1
+      label for="vestnikCheckboxAuthors" class="vestnikSearch"
+        = "Authors"
+      input id="vestnikCheckboxAuthors" type="checkbox" value="authors" class="vestnikSearch" checked=params[:authors]
+    .cb1
+      label for="vestnikCheckboxJobs" class="vestnikSearch"
+        = "Affiliations"
+      input id="vestnikCheckboxJobs" type="checkbox" value="jobs" class="vestnikSearch" checked=params[:jobs]
+    .cb1
+      label for="vestnikCheckboxTitles" class="vestnikSearch"
+        = "Titles"
+      input id="vestnikCheckboxTitles" type="checkbox" value="titles" class="vestnikSearch" checked=params[:titles]
+    .cb1
+      label for="vestnikCheckboxAbstract" class="vestnikSearch"
+        = "Abstracts"
+      input id="vestnikCheckboxAbstract" type="checkbox" value="abstract" class="vestnikSearch" checked=params[:abstract]
+    .cb1
+      label for="vestnikCheckboxKeywords" class="vestnikSearch"
+        = "Keywords"
+      input id="vestnikCheckboxKeywords" type="checkbox" value="keywords" class="vestnikSearch" checked=params[:keywords]
+    .cb1
+      label for="vestnikCheckboxReferences" class="vestnikSearch"
+        = "References"
+      input id="vestnikCheckboxReferences" type="checkbox" value="references" class="vestnikSearch" checked=params[:references]
+    .cb1
+      label for="vestnikCheckboxSelectAll" class="vestnikSearch"
+        = "Select All"
+      input id="vestnikCheckboxSelectAll" type="checkbox" value="selectAll" class="vestnikSearch"
+
+table.searchResults
+  - if @after #какая-то неведомая задница, если поставить вместо after publications, то возвращается неотсортированый массив
+    - @after.each_with_index do |pub, i|
+      tr
+        td
+          = link_to(@publications[i].text, "/issues/archive/issue/#{@publications[i].json["Год"]}-#{@publications[i].json["Номер выпуска"]}-#{@publications[i].json["Номер в выпуске"]}")
+          br
+          - unless @publications[i].json.blank?
+            - authors = []
+            - @publications[i].json["Авторы"].each do |id|
+              - authors << CatNode.get(id.to_i)
+            - if authors.length > 1
+              - authors.sort_by! {|a| a.title}
+            - authors.each_with_index do |author, i|
+              - if i != authors.length - 1
+                = link_to("#{author.json["Фамилия"]} #{author.json["Инициалы"]}", "/authors/author?id=" + author.id.to_s) + ","
+                = 
+              - else
+                = link_to "#{author.json["Фамилия"]} #{author.json["Инициалы"]}", "/authors/author?id=" + author.id.to_s
+        td
+          = (t ("vestnik.issue.year")) + ": " 
+          br
+          b
+            = @publications[i].json['Год'].to_s
+        td   
+          = (t ("vestnik.issue.issue")) + ": "
+          br
+          = link_to(@publications[i].json['Номер выпуска'].to_s, "/issues/archive/show/#{@publications[i].json['Год']}-#{@publications[i].json['Номер выпуска']}")
+        td
+          = (t ("vestnik.issue.pages")) + ": " 
+          br
+          = link_to(@publications[i].json['Страницы'].to_s, "/issues/archive/issue/#{@publications[i].json["Год"]}-#{@publications[i].json["Номер выпуска"]}-#{@publications[i].json["Номер в выпуске"]}")
+        
+        

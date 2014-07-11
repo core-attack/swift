@@ -2,6 +2,9 @@ body {
   padding-top: 60px;
   min-width: 800px;
 }
+.well{
+  min-width: 800px;
+}
 .blurry {
   opacity: 0.3;
 }
@@ -67,4 +70,34 @@ th.action  { width: 110px; text-align:center }
 }
 .nav-pills > li > a {
   outline: none;
+}
+.all_authors .author{
+  padding: 5px 0;
+}
+.all_authors .organizations{
+  margin-left: 275px;
+  padding-top: 3px;
+}
+select.authors{
+  width:300px;
+}
+select.authors.first{
+  margin-left: 20px;
+}
+select.authors.second{
+  margin-left: 300px;
+}
+select.authors.added{
+  margin-left: 20px;
+}
+a.buttonAddAuthor{
+  float: right;
+  margin: 10px;
+}
+a.buttonDeleteAuthor{
+  margin: 10px;
+  float: right;
+}
+ul.deps{
+  list-style-type: none;
 }

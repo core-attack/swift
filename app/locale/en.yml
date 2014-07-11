@@ -1,3 +1,60 @@
 en:
   home: Home
-  news: News
+  vestnik:
+    title: VM
+    header:
+      vestnik: Vestnik Udmurtskogo Universiteta.
+      mmk: Matematika. Mekhanika. Komp'yuternye Nauki
+      udsu: Udmurtskogo Gosudarstvennogo Universiteta
+      date: Published since 1991
+      search_: Search...
+      search: Search
+    issue:
+      table_of_contents: Table of contents
+      vestnik: Vestnik Udmurtskogo Universiteta. Matematika. Mekhanika. Komp'yuternye Nauki
+      year: Year
+      issue: No.
+      pages: Pages
+      name_of_article: Name of article
+      articles_in_issue: Total articles
+      author: Author
+      authors : Author(-s) 
+      abstract: Abstract
+      keywords: Keywords
+      codeUDC: UDC
+      codeMSC: MSC
+      received: Received
+      citation: Citation
+      references: References
+      full_text: Full text
+      article_name: Title 
+      pages: Pages
+      previous_issue: << Previous issue
+      next_issue: Next issue >>
+      previous_article: << Previous article
+      next_article: Next article >>
+      language: Language
+      affilation: Affiliations
+      issue: Issue
+      previous_min: <<
+      next_min: Next >>
+      all_issues: Total articles 
+      mittec: Development 
+      part: Section
+    all_publications:
+      departments: Organization
+      authors: Author
+      parts: Part
+      years: Year
+      issue: Issue  
+      countries: Country
+      cities: City
+      results: "Request results:"
+  time:
+    formats:
+      date: "%e %b %Y"
+      date_other_year: "%e %B %Y"
+      date_same_year: "%e %B"
+      datetime: "%e %b %Y, %H:%M:%S"    
+  errors:
+    cat_card: "Something is wrong. Perhaps you made a mistake when filling out the data card. Return and try to find her. If the problem persists, contact the developer."

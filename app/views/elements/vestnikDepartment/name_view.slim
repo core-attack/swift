@@ -1,0 +1,6 @@
+- if @dep.blank?
+  = "Sorry, organization does't exist!"
+- else
+  .department
+  - unless @dep.title.blank?
+    = @dep.title.to_s

@@ -1,0 +1,70 @@
+.department_breadcrumbs
+  = "Russian and foreign "
+  - @first_chars_arr.each_with_index do |deps, i|
+    a href=("/organizations?word=" + deps[0].upcase.to_s + "&type=all")
+      = deps[0].upcase
+    = ' '    
+  a href="/organizations?type=all"
+    = "Full list"
+  br
+  = "Russian "
+  - @first_chars_arr_russia.each_with_index do |deps, i|
+    a href=("/organizations?word=" + deps[0].upcase.to_s + "&type=russia")
+      = deps[0].upcase
+    = ' '    
+  a href="/organizations?type=russia"
+    = "Full list"
+  br
+  = "Foreign "
+  - @first_chars_arr_foreign.each_with_index do |deps, i|
+    a href=("/organizations?word=" + deps[0].upcase.to_s + "&type=foreign")
+      = deps[0].upcase
+    = ' '    
+  a href="/organizations?type=foreign"
+    = "Full list"
+  br
+  
+- if params['dep_id']
+  = throw :output, element( 'vestnikDepartment', @args, @opts )
+- else  
+  - if params['word']
+    - case params['type']
+    - when "all"
+      - @first_chars_arr[params['word']].each do |dep|
+        a href=("/organizations?dep_id=" + dep.id.to_s)
+          = dep.title
+        br
+    - when "russia"
+      - @first_chars_arr_russia[params['word']].each do |dep|
+        a href=("/organizations?dep_id=" + dep.id.to_s)
+          = dep.title
+        br
+    - when "foreign"
+      - @first_chars_arr_foreign[params['word']].each do |dep|
+        a href=("/organizations?dep_id=" + dep.id.to_s)
+          = dep.title
+        br
+  - else
+    - if params['type']
+      - case params['type']
+      - when "all"
+        - @deps.each do |dep|
+          a href=("/organizations?dep_id=" + dep.id.to_s)
+            = dep.title
+          br
+      - when "russia"
+        - @deps_russia.each do |dep|
+          a href=("/organizations?dep_id=" + dep.id.to_s)
+            = dep.title
+          br
+      - when "foreign"
+        - @deps_foreign.each do |dep|
+          a href=("/organizations?dep_id=" + dep.id.to_s)
+            = dep.title
+          br
+    - else
+      - @deps.each do |dep|
+          a href=("/organizations?dep_id=" + dep.id.to_s)
+            = dep.title
+            br
+    

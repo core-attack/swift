@@ -1,0 +1,169 @@
+﻿script type="text/javascript" src="/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+javascript:
+  MathJax.Hub.Config({
+    showProcessingMessages: false,
+    tex2jax: { inlineMath: [['$','$'],['\\(','\\)']] }
+  });
+.article
+  - a = @articles[@index - 1]
+  - if a
+    = a.departments_countries
+    = a.departments_cities
+    
+    .year-issue-pages
+      .info_archive
+        .line_caption
+          = t 'vestnik.issue.year'
+        .line_text
+          = a.json['Год']
+      .info_archive
+        .line_caption
+          = t 'vestnik.issue.issue' 
+        .line_text
+          =  a.json['Номер выпуска'].to_s 
+      .info_archive
+        .line_caption
+          = t 'vestnik.issue.pages' 
+        .line_text
+          = a.json['Страницы']
+      .min_nav
+        .before_article 
+          - if @before_article
+            = link_to "<<", @year.to_s + '-' + @num.to_s + '-' +  @before_article.to_s
+        .after_article
+          - if @after_article 
+            = link_to ">>",  @year.to_s + '-' + @num.to_s + '-' +  @after_article.to_s
+    table.table_article 
+      - if a.json['Раздел'] != "Other"
+        tr
+          td.line_caption
+            = t 'vestnik.issue.part'
+          td
+            = a.json['Раздел']
+      tr
+      td.line_caption
+        = t 'vestnik.issue.article_name'
+      td 
+        = a.text
+      tr
+      td.line_caption
+        = t 'vestnik.issue.authors'  
+      - s = ''
+      td
+        - index = 0
+        - words = {}
+        - authors = a.json['Авторы'].to_a
+        - authors.each_with_index do |author_id, i|
+          - author = CatNode.get(author_id.to_i)
+          - a.json["Публикующие организации"].each do |org_id|
+            - org = CatNode.get(org_id.to_i) 
+            - unless org.blank? 
+              - unless @orgs.include?(org)
+                - @orgs << org
+                - words[org.id.to_i] = index
+                - index += 1
+          - author_index = []
+          - @orgs.each do |org|
+            - unless org.blank?
+              - if author["Организации"].include?(org.id.to_s)
+                - author_index << words[org.id]
+          - stepen = ""
+          - author_index.each do |idx| 
+            - stepen += @WORDS[idx]
+          = link_to(("#{author.json['Фамилия']} #{ author.json['Инициалы']}"), ("/authors/author?id=" + author_id.to_s)) + content_tag(:sup, stepen) + (i == authors.length - 1 ? "" : ", ")
+      tr
+      td.line_caption
+        = t 'vestnik.issue.affilation'
+      td
+        - @orgs.each_with_index do |org, i|
+          - unless org.blank?
+            = link_to(org.title, "/organizations?dep_id=" + org.id.to_s) + content_tag(:sup, @WORDS[words[org.id]]) + (i == @orgs.length - 1 ? "" : ", ")
+      tr
+      td.line_caption
+        = t 'vestnik.issue.abstract' 
+      td 
+        = a.json['Аннотация'] 
+        /engine_render(a.json['Аннотация']) в этом случае некоторые формулы поедут из-за знака ^ 
+      tr
+      td.line_caption
+        = t 'vestnik.issue.keywords'  
+      td 
+        = a.json['Ключевые слова']
+      tr
+      td.line_caption
+        = t 'vestnik.issue.codeUDC'  
+      - unless a.json['УДК'].blank? 
+        td 
+          =  a.json['УДК']  
+      - else
+        td
+      tr
+      td.line_caption
+        = t 'vestnik.issue.codeMSC'  
+      - unless a.json['MSC'].blank? 
+        td 
+          - if a.json['MSC'].to_s.include? 'MSC: '
+            = a.json['MSC'].to_s.split('MSC: ')[1]
+          - else 
+            =  a.json['MSC'].to_s
+      - else
+        td
+      tr
+      td.line_caption
+        = t 'vestnik.issue.received' 
+      - arr = a.json['Поступила в редакцию (дата)'].split('_')[0].split('-')
+      td 
+        = I18n.l(Date.parse(a.json['Поступила в редакцию (дата)'], '%d %m %Y'), :format => (t 'time.formats.date_other_year'))
+      tr
+      td.line_caption
+        = t 'vestnik.issue.language'
+      td
+        = a.json['Язык']
+      tr
+      td.line_caption
+        = t 'vestnik.issue.citation'
+      - obr = ''.html_safe
+      - authors.each_with_index do |author_id, i|
+        - author = CatNode.get(author_id)
+        - obr << author.json['Фамилия'] + ' ' + author.json['Инициалы']
+        - if i == authors.length - 1
+          - obr << ' '
+        - else
+          - obr << ', '
+      - unless a.text.blank?      
+        - obr << a.text.strip + ', ' 
+        - obr << content_tag(:i, (t 'vestnik.issue.vestnik'))  + ', ' 
+        - obr << a.json['Год'].to_s + ', no. ' + a.json['Номер выпуска'].to_s + ', pp. ' + a.json['Страницы']  
+      - if obr
+        td 
+          = obr + '.'
+      - else
+        td
+      tr
+      td.line_caption
+        = t 'vestnik.issue.references'
+      td 
+        = engine_render(a.json['Список литературы'])
+      tr
+      td.line_caption
+        = t 'vestnik.issue.full_text' 
+      - link = ""
+      - if a["Оригинал"] 
+        - asset = Asset.first(:id => a.json["Оригинал"][0])
+        - if asset
+          - link = asset.file.url
+      - else
+        - asset = Asset.first(:file.like => '%'+a.title.to_s)
+        - if asset
+          - link = Asset.first(:file.like => '%'+a.title.to_s).file.url
+      td
+        .pdf_link
+          = link_to(link, link)  
+        
+    
+.before_article 
+  - if @before_article
+    = link_to (t 'vestnik.issue.previous_article'), @year.to_s + '-' + @num.to_s + '-' +  @before_article.to_s
+.after_article
+  - if @after_article 
+    = link_to (t 'vestnik.issue.next_article'),  @year.to_s + '-' + @num.to_s + '-' +  @after_article.to_s
