@@ -127,7 +127,7 @@
               - authors.sort_by! {|a| a.title}
             - authors.each_with_index do |author, i|
               - if i != authors.length - 1
-                = link_to("#{author.json["Фамилия"]} #{author.json["Инициалы"]}", "/authors/author?id=" + author.id.to_s) + ","
+                = link_to("#{author.json["Фамилия"]} #{author.json["Инициалы"]}", "/authors/author?id=" + author.id.to_s) + ", "
                 = 
               - else
                 = link_to "#{author.json["Фамилия"]} #{author.json["Инициалы"]}", "/authors/author?id=" + author.id.to_s

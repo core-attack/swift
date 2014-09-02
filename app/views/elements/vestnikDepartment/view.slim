@@ -44,11 +44,13 @@
     br
     - @publications_authors.each do |pa|
       = pa['publication'].publication_yin
+      = " "
       - pa['authors'].each_with_index do |author, i|
         - if i < pa['authors'].length - 1
           = link_to("#{author['Фамилия']} #{author['Инициалы']}", "/authors/author?id=#{author.id}") + ", "
         - else
           = link_to(author['Фамилия'].to_s + ' ' + author['Инициалы'].to_s, "/authors/author?id=#{author.id}")
+      = " "
       = link_to pa['publication'].text, "/issues/archive/issue/#{pa['publication']["Год"]}-#{pa['publication']["Номер выпуска"]}-#{pa['publication']["Номер в выпуске"]}"
       br
   - else
