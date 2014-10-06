@@ -1,0 +1,42 @@
+.header
+  .h_container
+    .journal_logo
+      a href='/' 
+        = image_tag '/img/design/journal.png', :alt => 'jlogo'
+    .second_column
+      .caption
+        .udsu_logo
+          a href='http://udsu.ru' 
+            = image_tag '/img/design/logo_udsu.png', :alt => 'logo'
+        .text_logo
+          = t 'vestnik.header.vestnik'
+          br
+          = t 'vestnik.header.mmk'
+          br
+          small 
+            = t 'vestnik.header.date'
+      .not_caption
+        .phone
+          = image_tag '/img/design/phone.png', :alt => 'phone'
+          = ' +7 (3412) 91 60 92'
+        .mail
+          = image_tag '/img/design/mail.png', :alt => 'mail'
+          = ' '
+          = mail_to 'imi@udsu.ru'
+        .search
+          = element 'Block', 'google-form'
+        .language
+          = element 'vestnikLanguages'
+          
+            
+/= div_open 'wrapper'
+<div class="wrapper">
+hr
+.first_column
+  = element 'MapTree'
+  
+
+/= div_open 'content'
+<div class="content">
+
+- not_found  unless @page
