@@ -828,7 +828,7 @@ function selectAuthorChange(el)//core-attack
   $(div_orgs).empty();
   $.ajax({
       type: 'GET',
-      url: "http://vestnik.mittec.su/author/" + author_id + ".json",
+      url: "http://vm.udsu.ru/author/" + author_id + ".json",
       data: author_id,
       success: function(data) {
         console.log(data);
