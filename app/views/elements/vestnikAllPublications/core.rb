@@ -9,7 +9,7 @@
 @all_publications.each do |p|
   h = {:number => p.json['Номер выпуска'], :value => "#{p.json['Номер выпуска']}"}
   @years        << p.json['Год']     unless @years.include?(p.json['Год'])
-  @issue << h                        unless @issue.include?(h)
+  @issue << h                        unless @issue.include?(h) && h.blank?
   @parts        << p.json['Раздел']  unless @parts.include?(p.json['Раздел'].to_s)
 end
 @issue.sort_by!{|i| i[:number]}
