@@ -75,7 +75,11 @@ Admin.controllers :cat_nodes do
       i = @object.json['Номер выпуска'].to_s
       n = @object.json['Номер в выпуске'].to_s
       @object.publication_yin = "#{@object.json['Год']}-#{i.length == 1 ? "0#{i}" : i}-#{n.length == 1 ? "0#{n}" : n}"
-      @object.save
+      if Character.isDigit(@object.json['Номер выпуска']) &&  Character.isDigit(@object.json['Номер в выпуске']) && Character.isDigit(@object.json['Год'])
+        @object.save
+      else
+        flash[:error] = pat(t ('padrino.admin.errors.nessesary_fields'))
+      end
     end
   end
   

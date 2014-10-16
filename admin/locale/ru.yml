@@ -61,6 +61,7 @@ ru:
           fields: Добавить поле
       error:
         select_file: Пожалуйста, выберите файл для загрузки
+        nessesary_fields: Пожалуйста, заполните обязательные поля
       multiple:
         destroyed: "%{objects} удалены"
         not_destroyed: "Объект '%{objects}' занят"
