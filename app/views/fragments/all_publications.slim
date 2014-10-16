@@ -1,0 +1,10 @@
+= fragment 'header'
+
+#wrapper
+  = element 'vestnikBreadcrumbs', :spacer => " » "
+  h2 class='page_title'
+    = @page.title
+  hr
+  = element 'vestnikAllPublications'
+  
+= fragment 'footer'
