@@ -75,10 +75,11 @@ Admin.controllers :cat_nodes do
       i = @object.json['Номер выпуска'].to_s
       n = @object.json['Номер в выпуске'].to_s
       @object.publication_yin = "#{@object.json['Год']}-#{i.length == 1 ? "0#{i}" : i}-#{n.length == 1 ? "0#{n}" : n}"
-      if @object.json['Номер выпуска'].is_a? Numeric &&  @object.json['Номер в выпуске'].is_a? Numeric && @object.json['Год'].is_a? Numeric
+      if @object.json['Номер выпуска'].to_s.numeric? &&  @object.json['Номер в выпуске'].to_s.numeric? && @object.json['Год'].to_s.numeric?
         @object.save
       else
         flash[:error] = pat(t ('padrino.admin.errors.nessesary_fields'))
+        render 'cat_nodes/edit'
       end
     end
   end

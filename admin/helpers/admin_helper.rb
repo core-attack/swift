@@ -163,5 +163,11 @@ Admin.helpers do
       url(@models, :index)
     end
   end
+  
+  class String 
+    def numeric?
+      Float(self) != nil rescue false
+    end
+  end
 
 end
