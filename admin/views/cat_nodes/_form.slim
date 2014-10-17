@@ -108,7 +108,10 @@
         - else
           = f.input key, opts
       - elsif as == :json
-        = f.input key, opts.merge({:as => :text, :value => @object.json[key].kind_of?(String) ? @object.json[key] : @object.json[key].to_json })
+        - if key == "Номер выпуска" || key == "Год" || key == "Статей в выпуске" || key == "Номер в выпуске" 
+          = f.input key, opts.merge({:as => :text, :value => @object.json[key].kind_of?(String) ? @object.json[key] : @object.json[key].to_json, :placeholder => (t 'vestnik.tooltip.nessesary_field') })
+        - else
+          = f.input key, opts.merge({:as => :text, :value => @object.json[key].kind_of?(String) ? @object.json[key] : @object.json[key].to_json })
       - elsif as == :datetime
         = f.input key, opts.merge( :as => :datetime, :value => @object.json[key] )
       - elsif as == :date

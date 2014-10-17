@@ -2,6 +2,8 @@ en:
   home: Home
   vestnik:
     title: VM
+    tooltip:
+      nessesary_field: Это поле не может быть пустым
     header:
       vestnik: Vestnik Udmurtskogo Universiteta.
       mmk: Matematika. Mekhanika. Komp'yuternye Nauki
