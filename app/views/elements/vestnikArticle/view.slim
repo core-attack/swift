@@ -7,7 +7,7 @@ javascript:
 .article
   - a = @articles[@index - 1]
   - if a
-    = "#{a.departments_countries} #{a.departments_cities}"
+    = "#{a.departments_countries.split(';').join("; ")} #{a.departments_cities.split(';').join("; ")}"
     .year-issue-pages
       .info_archive
         .line_caption
