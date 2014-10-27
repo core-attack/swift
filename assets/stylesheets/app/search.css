@@ -1,0 +1,43 @@
+#vestnikInputSearch{
+  width: 50%;
+}
+input.vestnikSearch{
+  margin-left: 10px;
+  width: 15px;
+}
+label.vestnikSearch{
+  margin-left: 20px;
+}
+input#buttonSearch{
+  width: 100px;
+}
+.searchResults td.atr, .searchResults td.eml{
+  width: 10%;
+}
+.searchResults td.org, .searchResults td.txt, .searchResults td.rsw, .searchResults td.kws, .searchResults td.rfs{
+  width: 15%;
+}
+.cbs{
+}
+.cb1{
+  display: inline-block;
+  margin: 0 -5px;
+}
+.gsc-control-cse .gsc-control-cse-en{
+  border-color: transparent;
+  background-color: transparent;
+}
+input.gsc-search-button-v2{
+  padding: 2px 5px;
+}
+input#gsc-i-id1
+{
+  width: 75%;
+  position: relative;
+  top: -6px;
+  left: -8px;
+  font-size: 12px;
+}
+td#gs_tti50{
+  min-width: 88px;
+}
