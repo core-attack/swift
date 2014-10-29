@@ -24,20 +24,20 @@ input#buttonSearch{
   margin: 0 -5px;
 }
 .gsc-control-cse .gsc-control-cse-en{
-  border-color: transparent;
-  background-color: transparent;
+  border-color: transparent !important; 
+  background-color: transparent !important;
 }
 input.gsc-search-button-v2{
-  padding: 2px 5px;
+  padding: 2px 5px !important;
 }
 input#gsc-i-id1
 {
-  width: 75%;
-  position: relative;
-  top: -6px;
-  left: -8px;
-  font-size: 12px;
+  width: 75% !important;
+  position: relative !important;
+  top: -6px !important;
+  left: -8px !important;
+  font-size: 12px !important;
 }
 td#gs_tti50{
-  min-width: 88px;
+  min-width: 88px !important;
 }
