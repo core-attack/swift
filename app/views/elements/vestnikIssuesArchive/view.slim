@@ -5,7 +5,7 @@
       - if year == e.json['Год']
         <td>
         - count = CatNode.all(:cat_card_id => 2,:conditions => ["json LIKE '%\"Номер выпуска\":#{e.json['Номер выпуска']}%' AND json LIKE '%\"Год\":#{e.json['Год']}%'"] ).count
-        = link_to e.json['Номер выпуска'].to_s + ' (' + count.to_s + ')', "archive/show/" + e.json['Год'].to_s + "-" + e.json['Номер выпуска'].to_s + "-1" 
+        = link_to e.json['Номер выпуска'].to_s + ' (' + count.to_s + ')', "archive/show/" + e.json['Год'].to_s + "-" + e.json['Номер выпуска'].to_s 
       - else
         <tr>
         <td>
