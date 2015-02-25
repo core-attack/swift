@@ -3,6 +3,10 @@
     = I18n.translate('vestnik.issue.year').to_s + ": "+ @issue.json['Год'].to_s + " " 
     = image_tag url('/img/design/130114150336_list-puncts.png')
     = ' '
+    - if @issue.json['Год'] >= 2015 && !@issue.json['Номер тома'].blank?
+      = I18n.translate('vestnik.issue.volume').to_s + ": "+ @issue.json['Номер тома'].to_s + " " 
+      = image_tag url('/img/design/130114150336_list-puncts.png')
+      = ' '
     = I18n.translate('vestnik.issue.issue').to_s + " " + @issue.json['Номер выпуска'].to_s 
     = image_tag url('/img/design/130114150336_list-puncts.png')
     = ' '
