@@ -138,9 +138,9 @@ javascript:
         - obr << a.text.strip + ', ' 
         - obr << content_tag(:i, (t 'vestnik.issue.vestnik'))  + ', ' 
         - if @issue.json['Год'] >= 2015 && !@issue.json['Номер тома'].blank?
-          - obr << a.json['Год'].to_s + ', no. ' + a.json['Номер выпуска'].to_s + ', pp. ' + a.json['Страницы']  
-        - else
           - obr << a.json['Год'].to_s + ', vol. ' + @issue.json['Номер тома'].to_s + ', no. ' + a.json['Номер выпуска'].to_s + ', pp. ' + a.json['Страницы']  
+        - else
+          - obr << a.json['Год'].to_s + ', no. ' + a.json['Номер выпуска'].to_s + ', pp. ' + a.json['Страницы']  
       - if obr
         td 
           = obr + '.'
